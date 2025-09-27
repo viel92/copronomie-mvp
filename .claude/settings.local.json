@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/sekou/OneDrive/Documents/copronomie/Migration/**)",
+      "Bash(mkdir:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm build:*)",
+      "Read(//c/Users/sekou/OneDrive/Documents/copronomie/src/pages/**)",
+      "Bash(cat:*)",
+      "Read(//c/Users/sekou/OneDrive/Documents/copronomie/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

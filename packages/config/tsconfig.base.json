@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@copronomie/ui": ["../../packages/ui"],
+      "@copronomie/types": ["../../packages/types"],
+      "@copronomie/utils": ["../../packages/utils"]
+    }
+  },
+  "exclude": ["node_modules"]
+}

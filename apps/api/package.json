@@ -1,0 +1,47 @@
+{
+  "name": "@copronomie/api",
+  "version": "1.0.0",
+  "description": "Backend API for Copronomie",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage"
+  },
+  "keywords": [
+    "api",
+    "backend",
+    "hono",
+    "copronomie"
+  ],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.14.0",
+  "dependencies": {
+    "@hono/node-server": "^1.19.4",
+    "@hono/swagger-ui": "^0.5.2",
+    "@hono/trpc-server": "^0.4.0",
+    "@hono/zod-openapi": "^1.1.3",
+    "@hono/zod-validator": "^0.7.3",
+    "@supabase/supabase-js": "^2.57.4",
+    "@trpc/client": "^11.5.1",
+    "@trpc/server": "^11.5.1",
+    "@types/ws": "^8.18.1",
+    "dotenv": "^17.2.2",
+    "hono": "^4.9.8",
+    "ws": "^8.18.3",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.17",
+    "@vitest/ui": "^3.2.4",
+    "nodemon": "^3.1.10",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "@copronomie/config",
+  "version": "0.0.1",
+  "description": "Shared configuration for Copronomie",
+  "main": "index.js",
+  "files": [
+    "*.js",
+    "*.json"
+  ],
+  "devDependencies": {
+    "@types/eslint": "^8.56.2",
+    "eslint": "^8.57.0",
+    "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
