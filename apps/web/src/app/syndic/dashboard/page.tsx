@@ -1,7 +1,14 @@
 'use client'
 
 import { trpc } from '@/lib/trpc'
-import { Card, CardContent, CardHeader, CardTitle, Button, Badge } from '@copronomie/ui'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Button,
+  Badge
+} from '@copronomie/ui'
 import { FolderKanban, Building, FileText, Plus, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -61,7 +68,7 @@ export default function SyndicDashboard() {
   }
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Tableau de bord Syndic</h1>

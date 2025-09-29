@@ -8,6 +8,7 @@ import { condoRouter } from './condo.router'
 import { alertRouter } from './alert.router'
 import { analyticsRouter } from './analytics.router'
 import { subscriptionRouter } from './subscription.router'
+import { companyRouter } from './company.router'
 
 export const appRouter = router({
   auth: authRouter,
@@ -19,6 +20,14 @@ export const appRouter = router({
   alerts: alertRouter,
   analytics: analyticsRouter,
   subscriptions: subscriptionRouter,
+  companies: companyRouter,
+  // Backward compatibility - expose contract sub-routes at root level
+  getPropertyContracts: contractRouter.property.getAll,
+  getEnergyContracts: contractRouter.energy.getAll,
+  getServiceContracts: contractRouter.serviceOrders.getAll,
+  deletePropertyContract: contractRouter.property.delete,
+  deleteEnergyContract: contractRouter.energy.delete,
+  deleteServiceContract: contractRouter.serviceOrders.delete,
 })
 
 export type AppRouter = typeof appRouter

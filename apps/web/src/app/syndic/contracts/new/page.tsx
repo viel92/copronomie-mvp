@@ -19,12 +19,12 @@ import {
 } from '@copronomie/ui'
 import { ArrowLeft, Save, Send, Loader2 } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { toast } from 'sonner'
 
 type ContractType = 'property' | 'service_orders' | 'energy'
 
-export default function NewContractPage() {
+function NewContractForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const contractType = (searchParams.get('type') || 'property') as ContractType
@@ -484,5 +484,13 @@ export default function NewContractPage() {
         </div>
       </form>
     </div>
+  )
+}
+
+export default function NewContractPage() {
+  return (
+    <Suspense fallback={<div className="p-8">Chargement...</div>}>
+      <NewContractForm />
+    </Suspense>
   )
 }

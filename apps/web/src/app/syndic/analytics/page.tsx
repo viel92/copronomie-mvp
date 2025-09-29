@@ -312,7 +312,7 @@ export default function SyndicAnalyticsPage() {
               <CardContent className="p-4">
                 <div className="text-center">
                   <p className="text-2xl font-bold">
-                    {(data.quotesByStatus.accepted as number) || 0}
+                    {(data.quotesByStatus && 'accepted' in data.quotesByStatus) ? data.quotesByStatus.accepted : 0}
                   </p>
                   <p className="text-sm text-muted-foreground">Devis acceptés</p>
                 </div>
@@ -324,7 +324,7 @@ export default function SyndicAnalyticsPage() {
                 <div className="text-center">
                   <p className="text-2xl font-bold">
                     {totalQuotesCount > 0
-                      ? Math.round((((data.quotesByStatus.accepted as number) || 0) / totalQuotesCount) * 100)
+                      ? Math.round((((data.quotesByStatus && 'accepted' in data.quotesByStatus) ? data.quotesByStatus.accepted : 0) / totalQuotesCount) * 100)
                       : 0}%
                   </p>
                   <p className="text-sm text-muted-foreground">Taux acceptation</p>

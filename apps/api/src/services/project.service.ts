@@ -5,7 +5,7 @@ export interface Project {
   title: string
   description: string
   syndic_id: string
-  status: 'draft' | 'published' | 'in_progress' | 'completed' | 'archived'
+  status: 'draft' | 'published' | 'analyzing' | 'awarded' | 'completed' | 'archived'
   budget?: number
   deadline?: string
   created_at: string
@@ -21,7 +21,7 @@ export interface CreateProjectInput {
   budget_min?: number
   budget_max?: number
   deadline?: string
-  status?: 'draft' | 'published'
+  status?: 'draft' | 'published' | 'analyzing' | 'awarded' | 'completed'
 }
 
 export interface UpdateProjectInput {
@@ -123,6 +123,36 @@ export class ProjectService {
 
   async archiveProject(projectId: string, userId: string) {
     return this.updateProject(projectId, { status: 'archived' }, userId)
+  }
+
+  async changeProjectStatus(
+    projectId: string,
+    status: 'draft' | 'published' | 'analyzing' | 'awarded' | 'completed',
+    userId: string
+  ) {
+    return this.updateProject(projectId, { status }, userId)
+  }
+
+  async awardProject(projectId: string, winningQuoteId: string, userId: string) {
+    // TODO: Update the winning quote and set project to awarded
+    // For now, just change status
+    const project = await this.updateProject(projectId, { status: 'awarded' }, userId)
+
+    // Update winning quote status
+    await supabaseClient
+      .from('quotes')
+      .update({ status: 'accepted' })
+      .eq('id', winningQuoteId)
+      .eq('project_id', projectId)
+
+    // Update other quotes to rejected
+    await supabaseClient
+      .from('quotes')
+      .update({ status: 'rejected' })
+      .eq('project_id', projectId)
+      .neq('id', winningQuoteId)
+
+    return project
   }
 }
 

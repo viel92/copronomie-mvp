@@ -1,4 +1,4 @@
-import { supabaseClient } from '../config/supabase'
+import { supabaseClient, supabaseAdmin } from '../config/supabase'
 
 export interface Condo {
   id: string
@@ -48,7 +48,9 @@ export interface Company {
 
 export class CondoService {
   async getCondosBySyndic(syndicId: string) {
-    const { data, error } = await supabaseClient
+    const client = supabaseAdmin || supabaseClient
+
+    const { data, error } = await client
       .from('condos')
       .select('*')
       .eq('syndic_id', syndicId)
@@ -103,11 +105,71 @@ export class CondoService {
   }
 
   async searchRegistry(query: string) {
-    const { data, error } = await supabaseClient
+    const client = supabaseAdmin || supabaseClient
+
+    // Selectionner uniquement les colonnes necessaires
+    const { data, error} = await client
       .from('coproprietes_registry')
-      .select('*')
-      .or(`ville.ilike.%${query}%,code_postal.ilike.%${query}%,adresse.ilike.%${query}%,numero_immatriculation.ilike.%${query}%`)
+      .select('numero_immatriculation, nom_usage_copropriete, numero_et_voie, adresse_reference, commune, commune_reference, code_postal_reference, nombre_total_lots, siret_representant_legal')
+      .or(`commune.ilike.%${query}%,commune_reference.ilike.%${query}%,code_postal_reference.ilike.%${query}%,numero_et_voie.ilike.%${query}%,numero_immatriculation.ilike.%${query}%`)
       .limit(20)
+
+    if (error) throw error
+    return data
+  }
+
+  async searchBySiret(siret: string, filters?: { ville?: string; code_postal?: string; minLots?: number; maxLots?: number }) {
+    console.log('🔍 searchBySiret called with:', { siret, filters })
+
+    const client = supabaseAdmin || supabaseClient
+
+    // Selectionner uniquement les colonnes necessaires (pas SELECT *)
+    let query = client
+      .from('coproprietes_registry')
+      .select('numero_immatriculation, nom_usage_copropriete, numero_et_voie, adresse_reference, commune, commune_reference, code_postal_reference, nombre_total_lots, nombre_lots_habitation, nombre_lots_stationnement, periode_construction, type_syndic, date_immatriculation')
+      .eq('siret_representant_legal', siret)
+
+    if (filters?.ville) {
+      query = query.or(`commune.ilike.%${filters.ville}%,commune_reference.ilike.%${filters.ville}%`)
+    }
+
+    if (filters?.code_postal) {
+      // Recherche "commence par" pour permettre la recherche progressive
+      query = query.ilike('code_postal_reference', `${filters.code_postal}%`)
+    }
+
+    if (filters?.minLots) {
+      query = query.gte('nombre_total_lots', filters.minLots)
+    }
+
+    if (filters?.maxLots) {
+      query = query.lte('nombre_total_lots', filters.maxLots)
+    }
+
+    // Limiter le nombre de resultats pour eviter les timeouts
+    // Pas de .order() pour eviter le tri couteux sur 141 lignes (tri cote client si besoin)
+    const { data, error } = await query.limit(500)
+
+    if (error) {
+      console.error('❌ Supabase error in searchBySiret:')
+      console.error('  - code:', error.code)
+      console.error('  - message:', error.message)
+      console.error('  - details:', error.details)
+      console.error('  - hint:', error.hint)
+      throw error
+    }
+
+    console.log(`✅ Found ${data?.length || 0} results`)
+    return data
+  }
+
+  async bulkCreateCondos(inputs: CreateCondoInput[]) {
+    const client = supabaseAdmin || supabaseClient
+
+    const { data, error } = await client
+      .from('condos')
+      .insert(inputs)
+      .select()
 
     if (error) throw error
     return data

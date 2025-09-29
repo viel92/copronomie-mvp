@@ -8,12 +8,22 @@ build/
 .next/
 .turbo/
 
-# Environment files
+# Environment files - SÉCURITÉ CRITIQUE
+**/.env*
 .env
 .env.local
+.env.development
 .env.development.local
+.env.test
 .env.test.local
+.env.production
 .env.production.local
+
+# API Keys et secrets
+**/secrets/
+**/*.key
+**/*.pem
+**/cert/
 
 # Logs
 *.log

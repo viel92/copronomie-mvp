@@ -86,10 +86,10 @@ export default function SyndicCompaniesPage() {
   }
 
   const avgRating = companies.length > 0
-    ? (companies.reduce((sum, c) => sum + (c.rating || 0), 0) / companies.length).toFixed(1)
+    ? (companies.reduce((sum: number, c: any) => sum + (c.rating || 0), 0) / companies.length).toFixed(1)
     : '0.0'
 
-  const certifiedCount = companies.filter(c =>
+  const certifiedCount = companies.filter((c: any) =>
     c.certifications && Object.keys(c.certifications as any).length > 0
   ).length
 
@@ -224,7 +224,7 @@ export default function SyndicCompaniesPage() {
           </Card>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {filteredCompanies.map((company) => (
+            {filteredCompanies.map((company: any) => (
               <Card key={company.id} className="hover:shadow-md transition-shadow">
                 <CardHeader className="pb-3">
                   <div className="flex justify-between items-start">
@@ -250,7 +250,7 @@ export default function SyndicCompaniesPage() {
                     <div className="mb-4">
                       <h4 className="text-sm font-medium mb-2">Spécialités</h4>
                       <div className="flex flex-wrap gap-1">
-                        {company.specialties.map((specialty, index) => (
+                        {company.specialties.map((specialty: string, index: number) => (
                           <Badge key={index} variant="secondary" className="text-xs">
                             {getSpecialtyLabel(specialty)}
                           </Badge>

@@ -1,18 +1,55 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Label } from "@copronomie/ui";
 import { Building2, Mail, Lock, User, ArrowLeft } from "lucide-react";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { authService } from '@/lib/auth';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 export default function AuthPage() {
   const router = useRouter();
+  const { login, isAuthenticated, user, isLoading: authLoading } = useAuth();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [userType, setUserType] = useState<'syndic' | 'company' | 'condo'>('syndic');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Redirection si déjà connecté
+  useEffect(() => {
+    if (isAuthenticated && user && !authLoading) {
+      // Rediriger selon le rôle
+      const redirectPath = user.role === 'syndic' ? '/syndic/dashboard'
+        : user.role === 'company' ? '/company/dashboard'
+        : '/condo/dashboard';
+
+      router.push(redirectPath);
+    }
+  }, [isAuthenticated, user, authLoading, router]);
+
+  // Afficher un loader pendant la vérification de session
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Vérification de la session...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Si connecté, afficher un message pendant la redirection
+  if (isAuthenticated && user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Redirection vers votre espace...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -79,23 +116,14 @@ export default function AuthPage() {
 
               try {
                 if (mode === 'login') {
-                  const result = await authService.login({ email, password });
-                  const role = result.user?.role || 'syndic';
-                  const dashboardPath = `/${role}/dashboard`;
-                  router.push(dashboardPath);
+                  const result = await login(email, password);
+                  if (result.success) {
+                    router.push('/syndic/dashboard');
+                  } else {
+                    setError(result.error || 'Erreur de connexion');
+                  }
                 } else {
-                  const confirmPassword = formData.get('confirmPassword') as string;
-                  const name = formData.get('name') as string;
-
-                  await authService.register({
-                    email,
-                    password,
-                    confirmPassword,
-                    role: userType,
-                    firstName: name,
-                  });
-
-                  setError('Inscription réussie ! Vérifiez votre email pour confirmer votre compte.');
+                  setError('Inscription temporairement désactivée');
                 }
               } catch (err: any) {
                 setError(err.message || 'Une erreur est survenue');

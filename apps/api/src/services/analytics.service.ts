@@ -5,6 +5,7 @@ export interface AnalyticsData {
   totalQuotes: number
   totalContracts: number
   totalCondos: number
+  totalBudget: number
   projectsByStatus: Record<string, number>
   quotesByStatus: Record<string, number>
   recentActivity: any[]
@@ -12,11 +13,12 @@ export interface AnalyticsData {
 
 export class AnalyticsService {
   async getSyndicAnalytics(syndicId: string): Promise<AnalyticsData> {
-    const [projects, quotes, contracts, condos] = await Promise.all([
+    const [projects, quotes, contracts, condos, budget] = await Promise.all([
       this.getProjectStats(syndicId),
       this.getQuoteStats(syndicId),
       this.getContractStats(syndicId),
       this.getCondoCount(syndicId),
+      this.getTotalBudget(syndicId),
     ])
 
     return {
@@ -24,6 +26,7 @@ export class AnalyticsService {
       totalQuotes: quotes.total,
       totalContracts: contracts.total,
       totalCondos: condos,
+      totalBudget: budget,
       projectsByStatus: projects.byStatus,
       quotesByStatus: quotes.byStatus,
       recentActivity: await this.getRecentActivity(syndicId),
@@ -99,6 +102,22 @@ export class AnalyticsService {
 
     if (error) throw error
     return count || 0
+  }
+
+  private async getTotalBudget(syndicId: string) {
+    const { data, error } = await supabaseClient
+      .from('projects')
+      .select('budget_max, budget_min')
+      .eq('syndic_id', syndicId)
+
+    if (error) throw error
+
+    const totalBudget = (data || []).reduce((sum, project) => {
+      const budget = project.budget_max || project.budget_min || 0
+      return sum + budget
+    }, 0)
+
+    return totalBudget
   }
 
   private async getRecentActivity(syndicId: string) {

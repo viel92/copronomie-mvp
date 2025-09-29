@@ -68,6 +68,17 @@ export const authRouter = router({
       }
     }),
 
+  // Route de debug pour tester l'état de l'utilisateur
+  debug: publicProcedure
+    .query(({ ctx }) => {
+      return {
+        success: true,
+        user: ctx.user,
+        hasUser: !!ctx.user,
+        contextKeys: Object.keys(ctx),
+      }
+    }),
+
   refresh: publicProcedure
     .input(
       z.object({

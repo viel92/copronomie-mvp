@@ -33,7 +33,7 @@ export const projectRouter = router({
         budget_min: z.number().optional(),
         budget_max: z.number().optional(),
         deadline: z.string().optional(),
-        status: z.enum(['draft', 'published']).optional(),
+        status: z.enum(['draft', 'published', 'analyzing', 'awarded', 'completed']).optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -50,7 +50,7 @@ export const projectRouter = router({
         id: z.string(),
         title: z.string().optional(),
         description: z.string().optional(),
-        status: z.enum(['draft', 'published', 'in_progress', 'completed', 'archived']).optional(),
+        status: z.enum(['draft', 'published', 'analyzing', 'awarded', 'completed']).optional(),
         budget: z.number().optional(),
         deadline: z.string().optional(),
       })
@@ -90,6 +90,40 @@ export const projectRouter = router({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const project = await projectService.archiveProject(input.id, ctx.user.id)
+      return { success: true, project }
+    }),
+
+  changeStatus: protectedProcedure
+    .input(z.object({
+      id: z.string(),
+      status: z.enum(['draft', 'published', 'analyzing', 'awarded', 'completed'])
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const project = await projectService.changeProjectStatus(input.id, input.status, ctx.user.id)
+      return { success: true, project }
+    }),
+
+  analyze: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const project = await projectService.changeProjectStatus(input.id, 'analyzing', ctx.user.id)
+      return { success: true, project }
+    }),
+
+  award: protectedProcedure
+    .input(z.object({
+      id: z.string(),
+      winningQuoteId: z.string()
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const project = await projectService.awardProject(input.id, input.winningQuoteId, ctx.user.id)
+      return { success: true, project }
+    }),
+
+  complete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const project = await projectService.changeProjectStatus(input.id, 'completed', ctx.user.id)
       return { success: true, project }
     }),
 })

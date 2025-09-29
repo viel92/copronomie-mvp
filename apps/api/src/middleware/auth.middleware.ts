@@ -15,32 +15,84 @@ declare module 'hono' {
   }
 }
 
+// Cache pour éviter de valider le même token plusieurs fois
+// Format: { token: { user: AuthUser, expiresAt: number } }
+const tokenCache = new Map<string, { user: AuthUser; expiresAt: number }>()
+const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+
+// Nettoyer le cache périodiquement
+setInterval(() => {
+  const now = Date.now()
+  for (const [token, data] of tokenCache.entries()) {
+    if (data.expiresAt < now) {
+      tokenCache.delete(token)
+    }
+  }
+}, 60 * 1000) // Nettoyer toutes les minutes
+
 /**
  * Middleware to verify JWT token from Authorization header
  */
 export const authMiddleware = async (c: Context, next: Next) => {
+  const startTime = Date.now()
+
   try {
     const authHeader = c.req.header('Authorization')
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.warn('[Auth] No token provided:', {
+        path: c.req.path,
+        method: c.req.method,
+      })
       throw new HTTPException(401, { message: 'No token provided' })
     }
 
     const token = authHeader.substring(7)
 
+    // Vérifier le cache d'abord
+    const cached = tokenCache.get(token)
+    if (cached && cached.expiresAt > Date.now()) {
+      c.set('user', cached.user)
+      console.log('[Auth] Token validated from cache:', {
+        userId: cached.user.id,
+        duration: Date.now() - startTime + 'ms'
+      })
+      await next()
+      return
+    }
+
     // Verify token with Supabase
     const { data: { user }, error } = await supabaseClient.auth.getUser(token)
 
     if (error || !user) {
+      console.warn('[Auth] Invalid token:', {
+        error: error?.message,
+        path: c.req.path,
+      })
+      tokenCache.delete(token)
       throw new HTTPException(401, { message: 'Invalid or expired token' })
     }
 
     // Add user to context
-    c.set('user', {
+    const authUser: AuthUser = {
       id: user.id,
       email: user.email!,
       role: user.user_metadata?.role,
       metadata: user.user_metadata,
+    }
+
+    c.set('user', authUser)
+
+    // Mettre en cache
+    tokenCache.set(token, {
+      user: authUser,
+      expiresAt: Date.now() + CACHE_TTL,
+    })
+
+    console.log('[Auth] Token validated successfully:', {
+      userId: user.id,
+      role: authUser.role,
+      duration: Date.now() - startTime + 'ms'
     })
 
     await next()
@@ -48,6 +100,7 @@ export const authMiddleware = async (c: Context, next: Next) => {
     if (error instanceof HTTPException) {
       throw error
     }
+    console.error('[Auth] Authentication failed:', error)
     throw new HTTPException(401, { message: 'Authentication failed' })
   }
 }
@@ -82,20 +135,46 @@ export const optionalAuth = async (c: Context, next: Next) => {
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7)
+
+      // Vérifier le cache d'abord
+      const cached = tokenCache.get(token)
+      if (cached && cached.expiresAt > Date.now()) {
+        c.set('user', cached.user)
+        await next()
+        return
+      }
+
       const { data: { user } } = await supabaseClient.auth.getUser(token)
 
       if (user) {
-        c.set('user', {
+        const authUser: AuthUser = {
           id: user.id,
           email: user.email!,
           role: user.user_metadata?.role,
           metadata: user.user_metadata,
+        }
+
+        c.set('user', authUser)
+
+        // Mettre en cache
+        tokenCache.set(token, {
+          user: authUser,
+          expiresAt: Date.now() + CACHE_TTL,
         })
       }
     }
   } catch (error) {
     // Silent fail - user remains undefined
+    console.debug('[Auth] Optional auth failed silently:', error)
   }
 
   await next()
+}
+
+/**
+ * Fonction utilitaire pour invalider un token du cache (lors de la déconnexion)
+ */
+export const invalidateToken = (token: string) => {
+  tokenCache.delete(token)
+  console.log('[Auth] Token invalidated from cache')
 }

@@ -30,10 +30,10 @@ import {
 } from '@copronomie/ui'
 import { Plus, Search, Edit, Trash2, FileText, Zap, Wrench, Loader2 } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { toast } from 'sonner'
 
-export default function ContractsPage() {
+function ContractsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState(searchParams.get('type') || 'property')
@@ -41,21 +41,21 @@ export default function ContractsPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [condoFilter, setCondoFilter] = useState('all')
 
-  const { data: propertyData, isLoading: propertyLoading } = trpc.contracts.getPropertyContracts.useQuery()
-  const { data: energyData, isLoading: energyLoading } = trpc.contracts.getEnergyContracts.useQuery()
-  const { data: serviceData, isLoading: serviceLoading } = trpc.contracts.getServiceContracts.useQuery()
+  const { data: propertyData, isLoading: propertyLoading } = trpc.contracts.property.getAll.useQuery()
+  const { data: energyData, isLoading: energyLoading } = trpc.contracts.energy.getAll.useQuery()
+  const { data: serviceData, isLoading: serviceLoading } = trpc.contracts.serviceOrders.getAll.useQuery()
   const { data: condosData } = trpc.condos.getAll.useQuery()
   const { data: user } = trpc.auth.me.useQuery()
 
-  const deletePropertyMutation = trpc.contracts.deletePropertyContract.useMutation({
+  const deletePropertyMutation = trpc.contracts.property.delete.useMutation({
     onSuccess: () => toast.success('Contrat supprimé')
   })
 
-  const deleteEnergyMutation = trpc.contracts.deleteEnergyContract.useMutation({
+  const deleteEnergyMutation = trpc.contracts.energy.delete.useMutation({
     onSuccess: () => toast.success('Contrat supprimé')
   })
 
-  const deleteServiceMutation = trpc.contracts.deleteServiceContract.useMutation({
+  const deleteServiceMutation = trpc.contracts.serviceOrders.delete.useMutation({
     onSuccess: () => toast.success('Contrat supprimé')
   })
 
@@ -77,7 +77,7 @@ export default function ContractsPage() {
   const condos = condosData?.condos || []
   const propertyContracts = propertyData?.contracts || []
   const energyContracts = energyData?.contracts || []
-  const serviceContracts = serviceData?.contracts || []
+  const serviceContracts = serviceData?.orders || []
 
   const filterContracts = (contracts: any[]) => {
     return contracts.filter((contract) => {
@@ -314,5 +314,13 @@ export default function ContractsPage() {
         </TabsContent>
       </Tabs>
     </div>
+  )
+}
+
+export default function ContractsPage() {
+  return (
+    <Suspense fallback={<div className="p-8">Chargement...</div>}>
+      <ContractsContent />
+    </Suspense>
   )
 }

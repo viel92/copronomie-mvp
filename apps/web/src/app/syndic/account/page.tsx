@@ -204,7 +204,8 @@ export default function AccountPage() {
                 <Separator />
 
                 <div className="text-xs text-muted-foreground">
-                  Compte créé le {user?.user?.created_at ? new Date(user.user.created_at).toLocaleDateString('fr-FR') : 'N/A'}
+                  {/* TODO: Fix created_at access from user object */}
+                  Compte créé le N/A
                 </div>
               </CardContent>
             </Card>

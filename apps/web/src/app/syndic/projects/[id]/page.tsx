@@ -89,18 +89,18 @@ export default function ProjectDetailsPage() {
   const condo = condos.find(c => c.id === project.condo_id)
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, { label: string; variant: any }> = {
-      draft: { label: 'Brouillon', variant: 'secondary' },
-      published: { label: 'Publié', variant: 'default' },
-      analyzing: { label: 'En analyse', variant: 'secondary' },
-      awarded: { label: 'Attribué', variant: 'outline' },
-      completed: { label: 'Terminé', variant: 'outline' },
+    const variants: Record<string, { label: string; className: string }> = {
+      draft: { label: 'Brouillon', className: 'bg-gray-100 text-gray-700 border-gray-200' },
+      published: { label: 'Publié', className: 'bg-blue-100 text-blue-800 border-blue-200' },
+      analyzing: { label: 'En analyse', className: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
+      awarded: { label: 'Attribué', className: 'bg-green-100 text-green-800 border-green-200' },
+      completed: { label: 'Terminé', className: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
     }
 
     const config = variants[status] || variants.draft
 
     return (
-      <Badge variant={config.variant}>
+      <Badge variant="outline" className={config.className}>
         {config.label}
       </Badge>
     )
@@ -124,7 +124,7 @@ export default function ProjectDetailsPage() {
   }
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center gap-4 flex-wrap">
         <Button variant="outline" onClick={() => router.push('/syndic/projects')}>
           <ArrowLeft className="h-4 w-4" />
@@ -135,11 +135,29 @@ export default function ProjectDetailsPage() {
             Détails du projet et comparaison des devis
           </p>
         </div>
-        <div className="flex gap-2">
-          {quotes.length > 1 && (
+        <div className="flex gap-2 flex-wrap">
+          {project.status === 'draft' && (
+            <Button variant="outline" onClick={() => router.push(`/syndic/projects/${projectId}/edit`)}>
+              <FileText className="h-4 w-4 mr-2" />
+              Modifier
+            </Button>
+          )}
+          {project.status === 'published' && quotes.length > 0 && (
+            <Button variant="outline">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Analyser les devis
+            </Button>
+          )}
+          {project.status === 'analyzing' && quotes.length > 1 && (
             <Button variant="outline" onClick={() => router.push(`/syndic/projects/${projectId}/comparison`)}>
               <BarChart3 className="h-4 w-4 mr-2" />
               Comparaison avancée
+            </Button>
+          )}
+          {project.status === 'awarded' && (
+            <Button variant="outline" onClick={() => router.push(`/syndic/projects/${projectId}/contract`)}>
+              <FileText className="h-4 w-4 mr-2" />
+              Voir le contrat
             </Button>
           )}
           {getStatusBadge(project.status)}

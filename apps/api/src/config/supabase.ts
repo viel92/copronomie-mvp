@@ -7,6 +7,11 @@ if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
   throw new Error('Missing Supabase environment variables')
 }
 
+console.log('🔑 Supabase config loaded:')
+console.log('  - URL:', process.env.SUPABASE_URL)
+console.log('  - Has ANON key:', !!process.env.SUPABASE_ANON_KEY)
+console.log('  - Has SERVICE_ROLE key:', !!process.env.SUPABASE_SERVICE_ROLE_KEY)
+
 // Client for public operations (with RLS)
 export const supabaseClient = createClient(
   process.env.SUPABASE_URL,

@@ -9,6 +9,8 @@ export * from './select'
 export * from './tabs'
 export * from './alert-dialog'
 export * from './textarea'
+export * from './separator'
+export * from './avatar'
 
 // Utils
 export * from './lib/utils'

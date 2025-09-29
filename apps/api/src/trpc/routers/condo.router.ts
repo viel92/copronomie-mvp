@@ -84,6 +84,64 @@ export const condoRouter = router({
       return { success: true, results }
     }),
 
+  searchBySiret: protectedProcedure
+    .input(
+      z.object({
+        siret: z.string(),
+        filters: z
+          .object({
+            ville: z.string().optional(),
+            code_postal: z.string().optional(),
+            minLots: z.number().optional(),
+            maxLots: z.number().optional(),
+          })
+          .optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const results = await condoService.searchBySiret(
+        input.siret,
+        input.filters
+      )
+      return { success: true, results }
+    }),
+
+  bulkImport: protectedProcedure
+    .input(
+      z.object({
+        condos: z.array(
+          z.object({
+            name: z.string(),
+            address: z.string(),
+            units_count: z.number().optional(),
+            city: z.string().optional(),
+            postal_code: z.string().optional(),
+            numero_immatriculation: z.string().optional(),
+            periode_construction: z.string().optional(),
+            type_syndic: z.string().optional(),
+            date_immatriculation: z.string().optional(),
+            nombre_lots_habitation: z.number().optional(),
+            nombre_lots_stationnement: z.number().optional(),
+            subscription_plan: z.string().optional(),
+            referral_code: z.string().optional(),
+          })
+        ),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (ctx.user.role !== 'syndic') {
+        throw new Error('Not authorized')
+      }
+
+      const condosWithSyndicId = input.condos.map((condo) => ({
+        ...condo,
+        syndic_id: ctx.user.id,
+      }))
+
+      const condos = await condoService.bulkCreateCondos(condosWithSyndicId)
+      return { success: true, condos }
+    }),
+
   companies: router({
     getAll: publicProcedure.query(async () => {
       const companies = await companyService.getAllCompanies()

@@ -10,6 +10,8 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
+    "dev:clean": "node scripts/cleanup-dev.js && pnpm dev",
+    "cleanup": "node scripts/cleanup-dev.js",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
     "test": "turbo test",

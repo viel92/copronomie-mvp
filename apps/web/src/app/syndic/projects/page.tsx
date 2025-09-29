@@ -69,6 +69,24 @@ export default function SyndicProjectsPage() {
     }
   })
 
+  const analyzeProjectMutation = trpc.projects.analyze.useMutation({
+    onSuccess: () => {
+      toast.success('Analyse du projet démarrée')
+    },
+    onError: () => {
+      toast.error('Erreur lors du démarrage de l\'analyse')
+    }
+  })
+
+  const completeProjectMutation = trpc.projects.complete.useMutation({
+    onSuccess: () => {
+      toast.success('Projet marqué comme terminé')
+    },
+    onError: () => {
+      toast.error('Erreur lors de la finalisation du projet')
+    }
+  })
+
   const isLoading = projectsLoading || condosLoading
 
   if (isLoading) {
@@ -107,13 +125,21 @@ export default function SyndicProjectsPage() {
     await publishProjectMutation.mutateAsync({ id: projectId })
   }
 
+  const handleAnalyzeProject = async (projectId: string) => {
+    await analyzeProjectMutation.mutateAsync({ id: projectId })
+  }
+
+  const handleCompleteProject = async (projectId: string) => {
+    await completeProjectMutation.mutateAsync({ id: projectId })
+  }
+
   const getStatusColor = (status: string) => {
     const styles = {
-      draft: 'bg-muted text-muted-foreground',
-      published: 'bg-primary text-primary-foreground',
-      analyzing: 'bg-yellow-100 text-yellow-800',
-      awarded: 'bg-green-100 text-green-800',
-      completed: 'bg-green-100 text-green-800'
+      draft: 'bg-gray-100 text-gray-700 border-gray-200',
+      published: 'bg-blue-100 text-blue-800 border-blue-200',
+      analyzing: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      awarded: 'bg-green-100 text-green-800 border-green-200',
+      completed: 'bg-emerald-100 text-emerald-800 border-emerald-200'
     }
     return styles[status as keyof typeof styles] || styles.draft
   }
@@ -143,7 +169,7 @@ export default function SyndicProjectsPage() {
   }
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="space-y-6">
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Gestion des Projets</h1>
@@ -245,7 +271,7 @@ export default function SyndicProjectsPage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="text-xl font-semibold text-foreground">{project.title}</h3>
-                        <Badge className={getStatusColor(project.status || 'draft')}>
+                        <Badge variant="outline" className={getStatusColor(project.status || 'draft')}>
                           {getStatusLabel(project.status || 'draft')}
                         </Badge>
                         {project.type && (
@@ -346,21 +372,89 @@ export default function SyndicProjectsPage() {
 
                     <div className="flex gap-2">
                       {project.status === 'draft' && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handlePublishProject(project.id)}
-                        >
-                          Publier
-                        </Button>
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handlePublishProject(project.id)}
+                            className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
+                          >
+                            Publier
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => router.push(`/syndic/projects/${project.id}/edit`)}
+                          >
+                            Modifier
+                          </Button>
+                        </>
                       )}
                       {project.status === 'published' && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => router.push(`/syndic/projects/${project.id}/quotes`)}
+                            className="bg-yellow-50 text-yellow-700 hover:bg-yellow-100 border-yellow-200"
+                          >
+                            Voir les devis
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleAnalyzeProject(project.id)}
+                          >
+                            Analyser
+                          </Button>
+                        </>
+                      )}
+                      {project.status === 'analyzing' && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => router.push(`/syndic/projects/${project.id}/comparison`)}
+                            className="bg-green-50 text-green-700 hover:bg-green-100 border-green-200"
+                          >
+                            Comparer
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => router.push(`/syndic/projects/${project.id}/quotes`)}
+                          >
+                            Devis
+                          </Button>
+                        </>
+                      )}
+                      {project.status === 'awarded' && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => router.push(`/syndic/projects/${project.id}/contract`)}
+                            className="bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200"
+                          >
+                            Contrat
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => router.push(`/syndic/projects/${project.id}/progress`)}
+                          >
+                            Suivi
+                          </Button>
+                        </>
+                      )}
+                      {project.status === 'completed' && (
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => router.push(`/syndic/projects/${project.id}/quotes`)}
+                          onClick={() => router.push(`/syndic/projects/${project.id}/report`)}
+                          className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200"
                         >
-                          Voir les devis
+                          Rapport final
                         </Button>
                       )}
                       <Button

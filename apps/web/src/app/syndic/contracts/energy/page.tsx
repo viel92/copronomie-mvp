@@ -37,11 +37,11 @@ export default function EnergyContractsPage() {
   const [condoFilter, setCondoFilter] = useState('all')
   const [energyTypeFilter, setEnergyTypeFilter] = useState('all')
 
-  const { data: contractsData, isLoading: contractsLoading } = trpc.contracts.getEnergyContracts.useQuery()
+  const { data: contractsData, isLoading: contractsLoading } = trpc.contracts.energy.getAll.useQuery()
   const { data: condosData } = trpc.condos.getAll.useQuery()
   const { data: user } = trpc.auth.me.useQuery()
 
-  const deleteContractMutation = trpc.contracts.deleteEnergyContract.useMutation({
+  const deleteContractMutation = trpc.contracts.energy.delete.useMutation({
     onSuccess: () => {
       toast.success("Contrat d'énergie supprimé avec succès")
     },
@@ -69,7 +69,7 @@ export default function EnergyContractsPage() {
   const contracts = contractsData?.contracts || []
   const condos = condosData?.condos || []
 
-  const filteredContracts = contracts.filter((contract) => {
+  const filteredContracts = contracts.filter((contract: any) => {
     const matchesSearch = contract.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          contract.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          contract.current_provider?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -213,7 +213,7 @@ export default function EnergyContractsPage() {
         </Card>
       ) : (
         <div className="grid gap-6">
-          {filteredContracts.map((contract) => {
+          {filteredContracts.map((contract: any) => {
             const condo = condos.find(c => c.id === contract.condo_id)
 
             return (
