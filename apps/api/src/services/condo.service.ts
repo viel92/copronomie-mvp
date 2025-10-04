@@ -72,13 +72,24 @@ export class CondoService {
   }
 
   async createCondo(input: CreateCondoInput) {
+    console.log('[CondoService] Creating condo with input:', {
+      name: input.name,
+      syndic_id: input.syndic_id,
+      hasAddress: !!input.address
+    })
+
     const { data, error } = await supabaseClient
       .from('condos')
       .insert(input)
       .select()
       .single()
 
-    if (error) throw error
+    if (error) {
+      console.error('[CondoService] Error creating condo:', error)
+      throw error
+    }
+
+    console.log('[CondoService] Condo created successfully:', data?.id)
     return data
   }
 

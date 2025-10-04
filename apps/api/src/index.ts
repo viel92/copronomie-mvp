@@ -81,14 +81,14 @@ console.log(`🚀 API Server starting on port ${port}`)
 const server = serve({
   fetch: app.fetch,
   port,
-  createServer: createServer as any
+  createServer: createServer as any,
+}, (info) => {
+  console.log(`✅ API Server running at http://localhost:${info.port}`)
+  console.log(`🔌 WebSocket Server running at ws://localhost:${info.port}/ws`)
+  console.log(`📚 API Documentation: http://localhost:${info.port}/api`)
+  console.log(`🏥 Health check: http://localhost:${info.port}/health`)
 })
 
 const wsManager = new WebSocketManager(server as any)
-
-console.log(`✅ API Server running at http://localhost:${port}`)
-console.log(`🔌 WebSocket Server running at ws://localhost:${port}/ws`)
-console.log(`📚 API Documentation: http://localhost:${port}/api`)
-console.log(`🏥 Health check: http://localhost:${port}/health`)
 
 export { wsManager }

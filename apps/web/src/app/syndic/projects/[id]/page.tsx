@@ -23,6 +23,30 @@ import {
 } from 'lucide-react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
+import { QuoteLinesView } from '@/components/quotes/QuoteLinesView'
+
+function QuoteLines({ quoteId }: { quoteId: string }) {
+  const { data: linesData, isLoading } = trpc.quoteLines.getByQuote.useQuery({ quoteId })
+
+  if (isLoading) {
+    return (
+      <div className="pt-4 border-t">
+        <p className="text-sm text-muted-foreground">Chargement du détail...</p>
+      </div>
+    )
+  }
+
+  if (!linesData?.lines || linesData.lines.length === 0) {
+    return null
+  }
+
+  return (
+    <div className="pt-4 border-t">
+      <h4 className="font-medium mb-3">Détail du devis</h4>
+      <QuoteLinesView lines={linesData.lines} />
+    </div>
+  )
+}
 
 export default function ProjectDetailsPage() {
   const router = useRouter()
@@ -281,13 +305,31 @@ export default function ProjectDetailsPage() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center">
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between items-start">
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
                         <Euro className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-2xl font-bold">{quote.amount.toLocaleString()} €</span>
+                        <span className="text-2xl font-bold">
+                          {(quote.total_ttc || quote.total_amount)?.toLocaleString()} € TTC
+                        </span>
                       </div>
+                      {quote.total_ht && (
+                        <p className="text-sm text-muted-foreground">
+                          Montant HT: {quote.total_ht.toLocaleString()} €
+                        </p>
+                      )}
+                      {quote.tva_rate && (
+                        <p className="text-sm text-muted-foreground">
+                          TVA: {quote.tva_rate}%
+                        </p>
+                      )}
+                      {quote.delay_days && (
+                        <p className="text-sm text-muted-foreground">
+                          <Calendar className="h-3 w-3 inline mr-1" />
+                          Délai: {quote.delay_days} jours
+                        </p>
+                      )}
                       <p className="text-sm text-muted-foreground">
                         Créé le {new Date(quote.created_at).toLocaleDateString('fr-FR')}
                       </p>
@@ -316,6 +358,31 @@ export default function ProjectDetailsPage() {
                       </div>
                     )}
                   </div>
+
+                  {quote.description && (
+                    <div className="pt-4 border-t">
+                      <h4 className="font-medium mb-2">Description de l'offre</h4>
+                      <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                        {quote.description}
+                      </p>
+                    </div>
+                  )}
+
+                  {quote.pdf_url && (
+                    <div className="pt-4 border-t">
+                      <h4 className="font-medium mb-2">Document PDF</h4>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(quote.pdf_url, '_blank')}
+                      >
+                        <FileText className="h-4 w-4 mr-2" />
+                        Télécharger le devis PDF
+                      </Button>
+                    </div>
+                  )}
+
+                  <QuoteLines quoteId={quote.id} />
                 </CardContent>
               </Card>
             ))}

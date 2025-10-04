@@ -29,7 +29,12 @@ export const quoteRouter = router({
       z.object({
         project_id: z.string(),
         company_id: z.string(),
-        amount: z.number(),
+        total_amount: z.number().optional(),
+        total_ht: z.number().optional(),
+        total_ttc: z.number().optional(),
+        description: z.string().optional(),
+        delay_days: z.number().optional(),
+        pdf_url: z.string().optional(),
         details: z.any().optional(),
       })
     )
@@ -42,7 +47,10 @@ export const quoteRouter = router({
     .input(
       z.object({
         id: z.string(),
-        amount: z.number().optional(),
+        total_amount: z.number().optional(),
+        total_ht: z.number().optional(),
+        total_ttc: z.number().optional(),
+        tva_rate: z.number().optional(),
         status: z.enum(['draft', 'submitted', 'accepted', 'rejected']).optional(),
         details: z.any().optional(),
       })

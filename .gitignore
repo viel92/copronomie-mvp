@@ -55,3 +55,10 @@ Thumbs.db
 # Temporary folders
 tmp/
 temp/
+
+# Database schema cache (generated files)
+scripts/db-schema/
+# Test artifacts
+test-results/
+playwright-report/
+nul

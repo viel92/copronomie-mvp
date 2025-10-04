@@ -35,6 +35,13 @@ export const supabaseAdmin = process.env.SUPABASE_SERVICE_ROLE_KEY
           autoRefreshToken: false,
           persistSession: false,
         },
+        global: {
+          headers: {
+            'Prefer': 'return=representation',
+            // Force schema reload on every request (workaround for PGRST cache bug)
+            'Accept-Profile': 'public',
+          },
+        },
       }
     )
   : null

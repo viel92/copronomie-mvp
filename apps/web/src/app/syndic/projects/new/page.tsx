@@ -24,17 +24,28 @@ import { toast } from 'sonner'
 export default function NewProjectPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+  const utils = trpc.useUtils()
 
   const { data: condosData } = trpc.condos.getAll.useQuery()
   const { data: user } = trpc.auth.me.useQuery()
 
   const createProjectMutation = trpc.projects.create.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       setIsLoading(false)
+      const status = data.project?.status || 'draft'
+
+      // Invalider le cache pour rafraîchir la liste
+      utils.projects.getAll.invalidate()
+
+      if (status === 'draft') {
+        toast.success('Projet sauvegardé en brouillon')
+      } else {
+        toast.success('Projet publié avec succès')
+      }
       router.push('/syndic/projects')
     },
-    onError: () => {
-      toast.error('Erreur lors de la création du projet')
+    onError: (error) => {
+      toast.error('Erreur lors de la création du projet: ' + error.message)
       setIsLoading(false)
     }
   })

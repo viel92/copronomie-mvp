@@ -171,7 +171,7 @@ export default function CompanyProjectsPage() {
             const condo = condos.find(c => c.id === project.condo_id)
 
             return (
-              <Card key={project.id} className="hover:shadow-lg transition-shadow">
+              <Card key={project.id} className="hover:shadow-lg transition-shadow" data-testid="project-card">
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div className="flex-1">

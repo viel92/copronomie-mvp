@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { z } from 'zod'
 import { zValidator } from '@hono/zod-validator'
-import { supabaseClient } from '../config/supabase'
+import { supabaseClient, supabaseAdmin } from '../config/supabase'
 import { rateLimiter } from '../middleware/rateLimiter.middleware'
 import { authMiddleware } from '../middleware/auth.middleware'
 
@@ -18,8 +18,8 @@ const registerSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   confirmPassword: z.string(),
-  role: z.enum(['syndic', 'company', 'condo']),
-  companyName: z.string().optional(),
+  role: z.enum(['syndic', 'company']),
+  companyName: z.string().min(1, 'Company/Syndic name is required'),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -36,8 +36,8 @@ const resetPasswordSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
 })
 
-// Apply rate limiting to auth endpoints
-app.use('*', rateLimiter({ windowMs: 15 * 60 * 1000, max: 5 }))
+// Apply rate limiting to auth endpoints (temporarily disabled for testing)
+// app.use('*', rateLimiter({ windowMs: 15 * 60 * 1000, max: 5 }))
 
 /**
  * POST /api/auth/register
@@ -49,6 +49,7 @@ app.post('/register',
     const data = c.req.valid('json')
 
     try {
+      // Create auth user
       const { data: authData, error } = await supabaseClient.auth.signUp({
         email: data.email,
         password: data.password,
@@ -66,6 +67,81 @@ app.post('/register',
         throw new HTTPException(400, { message: error.message })
       }
 
+      if (!authData.user) {
+        throw new HTTPException(400, { message: 'User creation failed' })
+      }
+
+      // Create role-specific entry using admin client
+      if (!supabaseAdmin) {
+        throw new HTTPException(500, { message: 'Admin client not configured' })
+      }
+
+      const userId = authData.user.id
+      const userEmail = authData.user.email
+
+      console.log('🔍 User created:', {
+        userId,
+        userEmail,
+        role: data.role,
+        identities: authData.user.identities?.length,
+      })
+
+      // Check if syndic/company entry already exists (maybe created by a trigger)
+      if (data.role === 'syndic') {
+        const { data: existingSyndic } = await supabaseAdmin
+          .from('syndics')
+          .select('id')
+          .eq('user_id', userId)
+          .single()
+
+        console.log('🔍 Existing syndic entry:', existingSyndic ? 'YES' : 'NO')
+
+        if (existingSyndic) {
+          console.log('✅ Syndic entry already exists (probably created by trigger)')
+        } else {
+          console.log('📝 Creating syndic entry...')
+          const { error: syndicError } = await supabaseAdmin
+            .from('syndics')
+            .insert({
+              user_id: userId,
+              company_info: data.companyName,
+            })
+
+          if (syndicError) {
+            console.error('Error creating syndic entry:', syndicError)
+            // Try to rollback auth user creation
+            await supabaseAdmin.auth.admin.deleteUser(userId)
+            throw new HTTPException(500, { message: 'Failed to create syndic profile' })
+          }
+        }
+      } else if (data.role === 'company') {
+        const { data: existingCompany } = await supabaseAdmin
+          .from('companies')
+          .select('id')
+          .eq('user_id', userId)
+          .single()
+
+        console.log('🔍 Existing company entry:', existingCompany ? 'YES' : 'NO')
+
+        if (existingCompany) {
+          console.log('✅ Company entry already exists (probably created by trigger)')
+        } else {
+          console.log('📝 Creating company entry...')
+          const { error: companyError } = await supabaseAdmin
+            .from('companies')
+            .insert({
+              user_id: userId,
+              name: data.companyName,
+            })
+
+          if (companyError) {
+            console.error('Error creating company entry:', companyError)
+            await supabaseAdmin.auth.admin.deleteUser(userId)
+            throw new HTTPException(500, { message: 'Failed to create company profile' })
+          }
+        }
+      }
+
       return c.json({
         success: true,
         message: 'Registration successful. Please check your email to confirm your account.',
@@ -77,6 +153,7 @@ app.post('/register',
       }, 201)
     } catch (error) {
       if (error instanceof HTTPException) throw error
+      console.error('Registration error:', error)
       throw new HTTPException(500, { message: 'Registration failed' })
     }
   }

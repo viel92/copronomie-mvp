@@ -30,9 +30,28 @@
       "Bash(timeout:*)",
       "Bash(cmd /c \"for /f \"\"skip=1 tokens=2\"\" %i in (''tasklist /fi \"\"imagename eq node.exe\"\" /fo table /nh'') do @if not \"\"%i\"\"==\"\"9504\"\" taskkill /F /PID %i >nul 2>&1\")",
       "Bash(curl -s -o nul -w \"%{http_code}\" \"http://localhost:3000/\")",
-      "Read(//c/Users/sekou/Downloads/Copronomie prodduction/import-coproprietes/**)"
+      "Read(//c/Users/sekou/Downloads/Copronomie prodduction/import-coproprietes/**)",
+      "Bash(test:*)",
+      "Bash(pnpm remove:*)",
+      "Bash(pnpm tsx:*)",
+      "Bash(cmd /c:*)",
+      "Bash(node:*)",
+      "WebSearch",
+      "Bash(pnpm exec:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm test:e2e:*)",
+      "Bash(curl:*)",
+      "Bash(python:*)",
+      "Bash(git checkout:*)",
+      "Bash(tee:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Prepare production deployment\n\n- Fix TypeScript build errors in quote-line.service.ts\n- Fix AuthProvider SSR hydration (isLoading state)\n- Fix condo schema mismatch (remove units_count)\n- Add E2E tests with Playwright (1/4 passing)\n- Add deployment guide (DEPLOYMENT.md)\n- Add environment examples (.env.example files)\n- Update ROADMAP.md with deployment status\n\nTests:\n- condo-creation.spec.ts: PASSING\n- syndic-workflow.spec.ts: WIP (selector issues)\n- full-workflow.spec.ts: WIP (selector issues)\n- company-workflow.spec.ts: WIP (no seed data)\n\nProduction build: SUCCESSFUL\nNext steps: Deploy to Vercel + Railway\n\nGenerated with Claude Code\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "outputStyle": "default",
+  "spinnerTipsEnabled": false
 }

@@ -11,7 +11,7 @@ export default function AuthPage() {
   const router = useRouter();
   const { login, isAuthenticated, user, isLoading: authLoading } = useAuth();
   const [mode, setMode] = useState<'login' | 'register'>('login');
-  const [userType, setUserType] = useState<'syndic' | 'company' | 'condo'>('syndic');
+  const [userType, setUserType] = useState<'syndic' | 'company'>('syndic');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,9 +19,7 @@ export default function AuthPage() {
   useEffect(() => {
     if (isAuthenticated && user && !authLoading) {
       // Rediriger selon le rôle
-      const redirectPath = user.role === 'syndic' ? '/syndic/dashboard'
-        : user.role === 'company' ? '/company/dashboard'
-        : '/condo/dashboard';
+      const redirectPath = user.role === 'company' ? '/company/dashboard' : '/syndic/dashboard';
 
       router.push(redirectPath);
     }
@@ -82,11 +80,10 @@ export default function AuthPage() {
             {mode === 'register' && (
               <div className="space-y-3">
                 <Label htmlFor="userType">Type de compte</Label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {[
                     { value: 'syndic', label: 'Syndic', icon: User },
-                    { value: 'company', label: 'Entreprise', icon: Building2 },
-                    { value: 'condo', label: 'Copropriété', icon: User }
+                    { value: 'company', label: 'Entreprise', icon: Building2 }
                   ].map((type) => (
                     <button
                       key={type.value}
@@ -118,12 +115,58 @@ export default function AuthPage() {
                 if (mode === 'login') {
                   const result = await login(email, password);
                   if (result.success) {
-                    router.push('/syndic/dashboard');
+                    // Rediriger selon le rôle
+                    const userRole = result.user?.role || 'syndic';
+                    const dashboardPath = userRole === 'company' ? '/company/dashboard' : '/syndic/dashboard';
+                    router.push(dashboardPath);
                   } else {
                     setError(result.error || 'Erreur de connexion');
                   }
                 } else {
-                  setError('Inscription temporairement désactivée');
+                  // Inscription
+                  const name = formData.get('name') as string;
+                  const companyName = formData.get('companyName') as string;
+
+                  if (!name) {
+                    setError('Le nom complet est requis');
+                    setLoading(false);
+                    return;
+                  }
+
+                  if (!companyName) {
+                    setError(userType === 'syndic' ? 'Le nom du syndic est requis' : 'Le nom de l\'entreprise est requis');
+                    setLoading(false);
+                    return;
+                  }
+
+                  const registerData = {
+                    email,
+                    password,
+                    confirmPassword: password,
+                    role: userType,
+                    firstName: name.split(' ')[0],
+                    lastName: name.split(' ').slice(1).join(' ') || name.split(' ')[0],
+                    companyName: companyName,
+                  };
+
+                  const result = await fetch('http://localhost:4000/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(registerData),
+                  });
+
+                  const data = await result.json();
+
+                  if (result.ok && data.success) {
+                    // Connexion automatique après inscription
+                    const loginResult = await login(email, password);
+                    if (loginResult.success) {
+                      const dashboardPath = userType === 'company' ? '/company/dashboard' : '/syndic/dashboard';
+                      router.push(dashboardPath);
+                    }
+                  } else {
+                    setError(data.message || 'Erreur lors de l\'inscription');
+                  }
                 }
               } catch (err: any) {
                 setError(err.message || 'Une erreur est survenue');
@@ -132,16 +175,30 @@ export default function AuthPage() {
               }
             }}>
               {mode === 'register' && (
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nom complet</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    type="text"
-                    placeholder="Votre nom complet"
-                    required
-                  />
-                </div>
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Nom complet</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      type="text"
+                      placeholder="Votre nom complet"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="companyName">
+                      {userType === 'syndic' ? 'Nom du syndic' : 'Nom de l\'entreprise'}
+                    </Label>
+                    <Input
+                      id="companyName"
+                      name="companyName"
+                      type="text"
+                      placeholder={userType === 'syndic' ? 'Ex: Syndic des Jardins' : 'Ex: Bâtiment Pro SARL'}
+                      required
+                    />
+                  </div>
+                </>
               )}
 
               <div className="space-y-2">

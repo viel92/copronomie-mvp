@@ -1,4 +1,4 @@
-import { supabaseClient } from '../config/supabase'
+import { supabaseClient, supabaseAdmin } from '../config/supabase'
 
 export interface Project {
   id: string
@@ -65,7 +65,11 @@ export class ProjectService {
   }
 
   async createProject(input: CreateProjectInput) {
-    const { data, error } = await supabaseClient
+    if (!supabaseAdmin) {
+      throw new Error('Supabase admin client not configured')
+    }
+
+    const { data, error } = await supabaseAdmin
       .from('projects')
       .insert({
         ...input,
@@ -83,7 +87,11 @@ export class ProjectService {
     input: UpdateProjectInput,
     userId: string
   ) {
-    const { data, error } = await supabaseClient
+    if (!supabaseAdmin) {
+      throw new Error('Supabase admin client not configured')
+    }
+
+    const { data, error } = await supabaseAdmin
       .from('projects')
       .update(input)
       .eq('id', projectId)
@@ -96,7 +104,11 @@ export class ProjectService {
   }
 
   async deleteProject(projectId: string, userId: string) {
-    const { error } = await supabaseClient
+    if (!supabaseAdmin) {
+      throw new Error('Supabase admin client not configured')
+    }
+
+    const { error } = await supabaseAdmin
       .from('projects')
       .delete()
       .eq('id', projectId)
@@ -134,19 +146,22 @@ export class ProjectService {
   }
 
   async awardProject(projectId: string, winningQuoteId: string, userId: string) {
-    // TODO: Update the winning quote and set project to awarded
-    // For now, just change status
+    if (!supabaseAdmin) {
+      throw new Error('Supabase admin client not configured')
+    }
+
+    // Update the winning quote and set project to awarded
     const project = await this.updateProject(projectId, { status: 'awarded' }, userId)
 
     // Update winning quote status
-    await supabaseClient
+    await supabaseAdmin
       .from('quotes')
       .update({ status: 'accepted' })
       .eq('id', winningQuoteId)
       .eq('project_id', projectId)
 
     // Update other quotes to rejected
-    await supabaseClient
+    await supabaseAdmin
       .from('quotes')
       .update({ status: 'rejected' })
       .eq('project_id', projectId)

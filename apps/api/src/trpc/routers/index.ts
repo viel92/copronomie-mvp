@@ -3,24 +3,28 @@ import { authRouter } from './auth.router'
 import { projectRouter } from './project.router'
 import { userRouter } from './user.router'
 import { quoteRouter } from './quote.router'
+import { quoteLineRouter } from './quote-line.router'
 import { contractRouter } from './contract.router'
 import { condoRouter } from './condo.router'
 import { alertRouter } from './alert.router'
 import { analyticsRouter } from './analytics.router'
 import { subscriptionRouter } from './subscription.router'
 import { companyRouter } from './company.router'
+import { emailRouter } from './email.router'
 
 export const appRouter = router({
   auth: authRouter,
   projects: projectRouter,
   users: userRouter,
   quotes: quoteRouter,
+  quoteLines: quoteLineRouter,
   contracts: contractRouter,
   condos: condoRouter,
   alerts: alertRouter,
   analytics: analyticsRouter,
   subscriptions: subscriptionRouter,
   companies: companyRouter,
+  email: emailRouter,
   // Backward compatibility - expose contract sub-routes at root level
   getPropertyContracts: contractRouter.property.getAll,
   getEnergyContracts: contractRouter.energy.getAll,

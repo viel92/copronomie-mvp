@@ -12,6 +12,16 @@ export const projectRouter = router({
       return { success: true, projects }
     }),
 
+  getPublished: protectedProcedure
+    .query(async ({ ctx }) => {
+      // For companies, this will return only published projects thanks to RLS
+      const projects = await projectService.getAllProjects(
+        ctx.user.id,
+        ctx.user.role
+      )
+      return { success: true, projects }
+    }),
+
   getById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {
@@ -37,11 +47,22 @@ export const projectRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const project = await projectService.createProject({
-        ...input,
-        syndic_id: ctx.user.id,
-      })
-      return { success: true, project }
+      try {
+        console.log('📝 Creating project with input:', JSON.stringify(input, null, 2))
+        console.log('👤 User ID:', ctx.user.id)
+
+        const project = await projectService.createProject({
+          ...input,
+          syndic_id: ctx.user.id,
+        })
+
+        console.log('✅ Project created successfully:', project.id)
+        return { success: true, project }
+      } catch (error: any) {
+        console.error('❌ Error creating project:', error.message)
+        console.error('Error details:', error)
+        throw error
+      }
     }),
 
   update: protectedProcedure

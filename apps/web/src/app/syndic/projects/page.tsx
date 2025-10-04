@@ -40,6 +40,7 @@ import { toast } from 'sonner'
 
 export default function SyndicProjectsPage() {
   const router = useRouter()
+  const utils = trpc.useUtils()
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [condoFilter, setCondoFilter] = useState('all')
@@ -51,6 +52,7 @@ export default function SyndicProjectsPage() {
 
   const deleteProjectMutation = trpc.projects.delete.useMutation({
     onSuccess: () => {
+      utils.projects.getAll.invalidate()
       toast.success('Projet supprimé avec succès')
       setDeletingProject(null)
     },
@@ -62,6 +64,7 @@ export default function SyndicProjectsPage() {
 
   const publishProjectMutation = trpc.projects.publish.useMutation({
     onSuccess: () => {
+      utils.projects.getAll.invalidate()
       toast.success('Projet publié avec succès')
     },
     onError: () => {
@@ -71,6 +74,7 @@ export default function SyndicProjectsPage() {
 
   const analyzeProjectMutation = trpc.projects.analyze.useMutation({
     onSuccess: () => {
+      utils.projects.getAll.invalidate()
       toast.success('Analyse du projet démarrée')
     },
     onError: () => {
@@ -80,6 +84,7 @@ export default function SyndicProjectsPage() {
 
   const completeProjectMutation = trpc.projects.complete.useMutation({
     onSuccess: () => {
+      utils.projects.getAll.invalidate()
       toast.success('Projet marqué comme terminé')
     },
     onError: () => {

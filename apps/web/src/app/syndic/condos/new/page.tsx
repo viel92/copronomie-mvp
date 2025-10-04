@@ -57,9 +57,9 @@ export default function NewCondoPage() {
     referral_code: ''
   })
 
-  const { data: registryData, isLoading: searchLoading } = trpc.condos.searchRegistry.useQuery(
+  const { data: registryData, isLoading: searchLoading, refetch: refetchRegistry } = trpc.condos.searchRegistry.useQuery(
     { query: searchQuery },
-    { enabled: searchQuery.length >= 3 }
+    { enabled: false } // Désactiver auto-fetch, utiliser bouton
   )
 
   const { data: siretData, isLoading: siretLoading, refetch: refetchSiret } = trpc.condos.searchBySiret.useQuery(
@@ -108,13 +108,21 @@ export default function NewCondoPage() {
   const bulkImportMutation = trpc.condos.bulkImport.useMutation({
     onSuccess: (data) => {
       toast.success(`${data.condos.length} copropriété(s) importée(s) avec succès`)
-      router.push('/syndic/condos')
+      setSelectedCondos([])
+      setSiretQuery('')
+      // Rafraîchir la page des copropriétés après import
+      setTimeout(() => {
+        router.push('/syndic/condos')
+      }, 1000)
     },
     onError: (error) => {
-      if (error.message.includes('duplicate key') || error.message.includes('condos_numero_immatriculation_key')) {
-        toast.error('Une ou plusieurs copropriétés sont déjà importées (numéro d\'immatriculation existant)')
+      const errorMessage = error.message.toLowerCase()
+      if (errorMessage.includes('duplicate key') ||
+          errorMessage.includes('immatriculation') ||
+          errorMessage.includes('unique constraint')) {
+        toast.error('❌ Certaines copropriétés sont déjà importées (numéro d\'immatriculation existant)')
       } else {
-        toast.error('Erreur lors de l\'import en masse: ' + error.message)
+        toast.error('❌ Erreur lors de l\'import: ' + error.message)
       }
     }
   })
@@ -135,6 +143,14 @@ export default function NewCondoPage() {
       nombre_lots_stationnement: registry.nombre_lots_stationnement?.toString() || ''
     })
     setSearchMode('manual')
+  }
+
+  const handleRegistrySearch = () => {
+    if (!searchQuery || searchQuery.length < 3) {
+      toast.error('Veuillez entrer au moins 3 caractères')
+      return
+    }
+    refetchRegistry()
   }
 
   const handleSiretSearch = () => {
@@ -251,14 +267,30 @@ export default function NewCondoPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Rechercher (min 3 caractères)..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Ville, code postal, adresse ou N° immatriculation..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleRegistrySearch()}
+                    className="pl-10"
+                  />
+                </div>
+                <Button onClick={handleRegistrySearch} disabled={searchLoading || searchQuery.length < 3}>
+                  {searchLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Recherche...
+                    </>
+                  ) : (
+                    <>
+                      <Search className="mr-2 h-4 w-4" />
+                      Rechercher
+                    </>
+                  )}
+                </Button>
               </div>
 
               {searchLoading && (
@@ -472,6 +504,7 @@ export default function NewCondoPage() {
                     <Label htmlFor="name">Nom de la copropriété *</Label>
                     <Input
                       id="name"
+                      name="name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="Résidence Les Jardins"
@@ -483,6 +516,7 @@ export default function NewCondoPage() {
                     <Label htmlFor="address">Adresse *</Label>
                     <Input
                       id="address"
+                      name="address"
                       value={formData.address}
                       onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                       placeholder="12 rue de la Paix"

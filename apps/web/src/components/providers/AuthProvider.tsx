@@ -32,7 +32,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<AuthSession | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(typeof window === 'undefined' ? false : true)
 
   // Clés de stockage sécurisées
   const USER_STORAGE_KEY = 'copronomie_user'
@@ -64,7 +64,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Charger la session depuis localStorage au démarrage
   const loadStoredSession = useCallback(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined') {
+      setIsLoading(false)
+      return
+    }
 
     try {
       const storedUser = localStorage.getItem(USER_STORAGE_KEY)

@@ -37,14 +37,30 @@ export const condoRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      console.log('[CondoRouter] Create condo mutation called', {
+        user: ctx.user.id,
+        role: ctx.user.role,
+        condoName: input.name
+      })
+
       if (ctx.user.role !== 'syndic') {
+        console.error('[CondoRouter] User not authorized - role:', ctx.user.role)
         throw new Error('Not authorized')
       }
-      const condo = await condoService.createCondo({
-        ...input,
-        syndic_id: ctx.user.id,
-      })
-      return { success: true, condo }
+
+      try {
+        // Remove units_count as it doesn't exist in the database
+        const { units_count, ...condoData } = input
+        const condo = await condoService.createCondo({
+          ...condoData,
+          syndic_id: ctx.user.id,
+        })
+        console.log('[CondoRouter] Condo created successfully')
+        return { success: true, condo }
+      } catch (error) {
+        console.error('[CondoRouter] Error creating condo:', error)
+        throw error
+      }
     }),
 
   update: protectedProcedure
