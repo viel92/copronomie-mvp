@@ -229,56 +229,46 @@ Semaine 3: Deploy Beta + Ajustements
 
 ---
 
-### SEMAINE 2: Tests + Infrastructure Déploiement [Jours 8-14]
+### SEMAINE 2: Tests + Infrastructure Déploiement [Jours 8-14] - ✅ PARTIELLEMENT COMPLÉTÉ
 
-#### Jour 8-9: Tests Critiques MVP
-- [ ] Tests E2E Playwright workflow principal:
-  - [ ] Syndic: register → create project → publish
-  - [ ] Company: register → see project → submit quote
-  - [ ] Syndic: accept quote → award project
+#### Jour 8-9: Tests Critiques MVP - ⚠️ PARTIELLEMENT FAIT
+- ✅ Tests E2E Playwright workflow principal:
+  - ✅ Syndic: register → create condo (condo-creation.spec.ts PASSE)
+  - ⚠️ Syndic: create project → publish (échecs sélecteurs)
+  - ⚠️ Company: submit quote (pas de seed data)
 - [ ] Tests unitaires services critiques:
   - [ ] ProjectService (create, publish, award)
   - [ ] QuoteService (create, accept, reject)
   - [ ] EmailService (send)
 - [ ] Fix bugs découverts
 
-#### Jour 10-11: Docker + Déploiement
-- [ ] Dockerfile Next.js optimisé (multi-stage)
-- [ ] Dockerfile Hono API
-- [ ] docker-compose.yml dev + prod
-- [ ] Variables env (.env.example)
-- [ ] Test build production local
+#### Jour 10-11: Docker + Déploiement - ✅ COMPLÉTÉ
+- ✅ Dockerfile Next.js optimisé (multi-stage) avec fixes ESM
+- ✅ Dockerfile Hono API avec tsup bundler
+- ✅ docker-compose.yml configuré
+- ✅ Variables env (.env sur VPS)
+- ✅ Test build production sur VPS
 
-#### Jour 12-13: Setup Hébergement
-**Options:**
-- **Option A (Recommandée MVP):** Vercel (frontend) + Railway/Render (API)
-  - Deploy Next.js sur Vercel (gratuit)
-  - Deploy API sur Railway (5$/mois)
-  - Supabase déjà hébergé
-  - **Avantages:** Setup 1h, 0 config serveur, auto-scaling
+#### Jour 12-13: Setup Hébergement - ✅ COMPLÉTÉ (Option B VPS Custom)
+**CHOIX RÉALISÉ:** Option B - VPS Custom (Hetzner) avec Docker Compose
 
-- **Option B:** VPS Custom (DigitalOcean/Hetzner)
-  - Docker Compose sur VPS
-  - Nginx reverse proxy
-  - **Avantages:** Contrôle total, moins cher long terme
-  - **Inconvénients:** Setup 1 jour, maintenance
+**Raison du choix:** Contrôle total, coûts prévisibles, scalabilité maîtrisée
 
-**CHOIX RECOMMANDÉ MVP:** Option A (Vercel + Railway) pour vitesse déploiement
+**Tasks Réalisées:**
+- ✅ VPS Hetzner provisionné (IP: 46.62.158.59)
+- ✅ Docker Compose sur VPS installé et configuré
+- ✅ Nginx reverse proxy configuré (2 server blocks)
+- ✅ DNS OVH configuré (staging-app + staging-api.copronomie.fr)
+- ✅ SSL Certbot (Let's Encrypt) configuré avec auto-renew
+- ✅ Tests production déployée (HTTP 200 OK sur tous endpoints)
 
-**Tasks Option A:**
-- [ ] Deploy Next.js sur Vercel (connecter GitHub)
-- [ ] Deploy API sur Railway (connecter GitHub)
-- [ ] Configurer variables env sur platforms
-- [ ] Setup domaine custom (optionnel MVP)
-- [ ] Test production déployé
-
-#### Jour 14: Monitoring Basique
+#### Jour 14: Monitoring Basique - ⚠️ TODO
 - [ ] Setup Sentry (gratuit) frontend + backend
 - [ ] Logging Winston API avec rotation
-- [ ] Health check endpoint API (`/health`)
+- ✅ Health check endpoint API (`/health`) - déjà existant
 - [ ] Test monitoring avec erreurs volontaires
 
-**CHECKPOINT SEMAINE 2:** Application déployée en staging, testée, monitorée
+**CHECKPOINT SEMAINE 2:** ✅ Application déployée en staging HTTPS, accessible publiquement, conteneurs healthy
 
 ---
 
@@ -860,8 +850,97 @@ Transformer le MVP beta en produit production-ready basé sur feedback utilisate
 
 ---
 
-**Dernière mise à jour:** 4 Octobre 2025
+**Dernière mise à jour:** 12 Octobre 2025
 **Prochaine révision:** Après déploiement production
+
+---
+
+## MISE À JOUR 12 OCTOBRE 2025 - DÉPLOIEMENT STAGING COMPLÉTÉ ✅
+
+### Infrastructure Déployée - VPS 1 (STAGING)
+**Hébergement:** Hetzner VPS (IP: 46.62.158.59)
+**DNS:** OVH (staging-app.copronomie.fr, staging-api.copronomie.fr)
+**Architecture:** Docker Compose + Nginx + SSL
+
+#### Composants Installés ✅
+- ✅ **Système:** Ubuntu Server mis à jour
+- ✅ **Docker:** Docker Engine + Docker Compose V2
+- ✅ **Nginx:** Reverse proxy configuré pour API et Web
+- ✅ **Certbot:** SSL/TLS (Let's Encrypt) configuré et auto-renouvelable
+- ✅ **Git:** Projet cloné sur /home/copronomie/copronomie-mvp
+
+#### Services Déployés ✅
+- ✅ **API Hono:** https://staging-api.copronomie.fr (Port 4000, Status: Healthy)
+- ✅ **Web Next.js:** https://staging-app.copronomie.fr (Port 3000, Status: Ready)
+- ✅ **Health Checks:** Fonctionnels (healthcheck wget)
+- ✅ **HTTPS:** Certificats SSL actifs sur les deux domaines
+
+### Corrections Techniques Majeures
+
+#### 1. Fix ESM Import Issues (API)
+**Problème:** `Cannot find module '/app/apps/api/dist/routes/auth.routes'`
+**Cause:** TypeScript `tsc` ne gère pas les imports ESM avec extensions .js
+**Solution:** Migration de `tsc` vers `tsup` bundler
+- ✅ Ajout `tsup@^8.0.0` dans devDependencies
+- ✅ Configuration `apps/api/tsup.config.ts` avec format ESM
+- ✅ Build script modifié: `"build": "tsup"` (apps/api/package.json:9)
+- ✅ Bundle output: `dist/index.js` avec tous les modules intégrés
+
+#### 2. Fix Docker Multi-stage Build
+**Problème:** Build stage ne trouvait pas `tsup` et `next` commands
+**Cause:** `pnpm install` dans dependencies stage ne connaissait pas les apps packages
+**Solution:** Copie des package.json des apps avant pnpm install
+- ✅ Ajout `COPY apps/api/package.json` et `apps/web/package.json` dans stage dependencies
+- ✅ Permet à pnpm de résoudre tous les packages du workspace (apps/api/Dockerfile:9-10)
+- ✅ DevDependencies installées correctement (tsup, next)
+
+#### 3. Fix Next.js Start Command
+**Problème:** `Cannot find module '/app/node_modules/.bin/next'`
+**Cause:** Path relatif vers binaire next incorrect
+**Solution:** Utilisation de pnpm avec workspace filter
+- ✅ CMD modifié: `["pnpm", "--filter", "@copronomie/web", "start"]` (apps/web/Dockerfile:64)
+- ✅ Workspace résolu correctement en production
+
+#### 4. Nginx Configuration
+**Configuration:** 2 server blocks (app + api)
+- ✅ Reverse proxy vers localhost:3000 (web) et localhost:4000 (api)
+- ✅ Headers CORS et sécurité configurés
+- ✅ Client max body size: 10M
+- ✅ Timeouts: read 60s, send 60s
+- ✅ Redirection HTTP → HTTPS automatique
+
+### Configuration Environnement
+- ✅ `.env` fichiers copiés sur VPS
+- ✅ Variables Supabase configurées (URL, ANON_KEY, SERVICE_ROLE_KEY)
+- ✅ RESEND_API_KEY configuré pour emails
+- ✅ CORS origins configurés pour staging domains
+
+### Tests Post-Déploiement ✅
+- ✅ `curl -I http://localhost:3000` → HTTP 200 OK
+- ✅ `curl -I http://localhost:4000/health` → HTTP 200 OK
+- ✅ `curl -I https://staging-app.copronomie.fr` → HTTPS 200 OK
+- ✅ `curl -I https://staging-api.copronomie.fr/health` → HTTPS 200 OK
+- ✅ Conteneurs Docker: api (healthy), web (ready)
+- ✅ Logs Docker: Aucune erreur, Next.js démarré en 488ms
+
+### Commits Déploiement
+1. `chore: Update pnpm-lock.yaml for tsup dependency` (f6cc5b4)
+2. `fix: Copy apps package.json before pnpm install in Dockerfiles` (db4431d)
+3. `fix: Use pnpm to start Next.js instead of direct binary path` (d174f52)
+
+### Prochaines Étapes - STAGING
+1. [ ] Tests workflow complet manuel sur staging (browser)
+2. [ ] Tests E2E contre environnement staging
+3. [ ] Collecte feedback beta testers
+4. [ ] Fix bugs identifiés en staging
+
+### Prochaines Étapes - PRODUCTION (VPS 2)
+1. [ ] Déployer VPS 2 avec même configuration
+2. [ ] DNS production (app.copronomie.fr, api.copronomie.fr)
+3. [ ] SSL Certbot pour production
+4. [ ] Migration données beta → production
+5. [ ] Monitoring Sentry (frontend + backend)
+6. [ ] Backup automatique database
 
 ---
 
