@@ -5,7 +5,7 @@ RUN corepack enable
 # Stage 1: Dependencies
 FROM base AS dependencies
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages packages
 RUN pnpm install --frozen-lockfile --production=false
 
@@ -20,7 +20,7 @@ FROM base AS production
 WORKDIR /app
 
 # Copy only production dependencies
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages packages
 RUN pnpm install --frozen-lockfile --production
 

@@ -63,7 +63,3 @@ services:
 networks:
   copronomie-network:
     driver: bridge
-
-# Configuration pour développement local
----
-# docker-compose.override.yml sera utilisé automatiquement en dev
