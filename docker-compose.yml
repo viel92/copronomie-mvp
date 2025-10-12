@@ -10,7 +10,7 @@ services:
     ports:
       - "4000:4000"
     env_file:
-      - apps/api/.env.production
+      - apps/api/.env
     restart: unless-stopped
     networks:
       - copronomie-network
@@ -26,10 +26,14 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+        - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+        - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
     ports:
       - "3000:3000"
     env_file:
-      - apps/web/.env.production
+      - apps/web/.env
     depends_on:
       - api
     restart: unless-stopped
