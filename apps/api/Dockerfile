@@ -19,14 +19,17 @@ RUN pnpm --filter @copronomie/api build
 FROM base AS production
 WORKDIR /app
 
-# Copy only production dependencies
+# Copy package.json files for workspace resolution
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/api/package.json ./apps/api/package.json
+COPY apps/web/package.json ./apps/web/package.json
 COPY packages packages
+
+# Install production dependencies
 RUN pnpm install --frozen-lockfile --production
 
 # Copy built application
 COPY --from=build /app/apps/api/dist ./apps/api/dist
-COPY --from=build /app/apps/api/package.json ./apps/api/package.json
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs

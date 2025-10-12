@@ -24,15 +24,18 @@ RUN pnpm --filter @copronomie/web build
 FROM base AS production
 WORKDIR /app
 
-# Copy only production dependencies
+# Copy package.json files for workspace resolution
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/web/package.json ./apps/web/package.json
+COPY apps/api/package.json ./apps/api/package.json
 COPY packages packages
+
+# Install production dependencies
 RUN pnpm install --frozen-lockfile --production
 
 # Copy built application
 COPY --from=build /app/apps/web/.next ./apps/web/.next
 COPY --from=build /app/apps/web/public ./apps/web/public
-COPY --from=build /app/apps/web/package.json ./apps/web/package.json
 COPY --from=build /app/apps/web/next.config.js ./apps/web/next.config.js
 
 # Create non-root user
@@ -55,4 +58,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
 
 # Start the application
-CMD ["pnpm", "--filter", "@copronomie/web", "start"]
+WORKDIR /app/apps/web
+CMD ["../../node_modules/.bin/next", "start"]
