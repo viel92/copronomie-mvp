@@ -48,7 +48,8 @@
       "Bash(git add:*)",
       "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Prepare production deployment\n\n- Fix TypeScript build errors in quote-line.service.ts\n- Fix AuthProvider SSR hydration (isLoading state)\n- Fix condo schema mismatch (remove units_count)\n- Add E2E tests with Playwright (1/4 passing)\n- Add deployment guide (DEPLOYMENT.md)\n- Add environment examples (.env.example files)\n- Update ROADMAP.md with deployment status\n\nTests:\n- condo-creation.spec.ts: PASSING\n- syndic-workflow.spec.ts: WIP (selector issues)\n- full-workflow.spec.ts: WIP (selector issues)\n- company-workflow.spec.ts: WIP (no seed data)\n\nProduction build: SUCCESSFUL\nNext steps: Deploy to Vercel + Railway\n\nGenerated with Claude Code\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(npx @sentry/wizard@latest:*)"
     ],
     "deny": [],
     "ask": []

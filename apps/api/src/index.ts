@@ -16,8 +16,12 @@ import { createOpenAPIApp } from './lib/openapi'
 import { appRouter } from './trpc/routers'
 import { createContext } from './trpc/context'
 import { optionalAuth } from './middleware/auth.middleware'
+import { initSentry, Sentry } from './lib/sentry'
 
 dotenv.config()
+
+// Initialize Sentry
+initSentry()
 
 const app = new Hono()
 const apiDocsApp = createOpenAPIApp()
@@ -67,6 +71,10 @@ app.notFound((c) => {
 // Error handler
 app.onError((err, c) => {
   console.error(`${err}`)
+
+  // Send error to Sentry
+  Sentry.captureException(err)
+
   return c.json({
     error: err.name,
     message: err.message,
