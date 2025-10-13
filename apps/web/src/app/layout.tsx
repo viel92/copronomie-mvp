@@ -11,8 +11,75 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Copronomie V2 - Gestion de Copropriétés',
-  description: 'Plateforme SaaS pour la gestion de copropriétés - Syndics, Entreprises et Copropriétaires',
+  title: {
+    default: 'Copronomie - La plateforme qui simplifie les travaux de copropriété',
+    template: '%s | Copronomie'
+  },
+  description: 'Simplifiez la gestion de vos travaux de copropriété. Publiez vos projets, recevez des devis qualifiés d\'artisans vérifiés et choisissez la meilleure offre en quelques clics.',
+  keywords: ['copropriété', 'syndic', 'travaux', 'devis', 'artisans', 'gestion', 'rénovation', 'chantier'],
+  authors: [{ name: 'Copronomie' }],
+  creator: 'Copronomie',
+  publisher: 'Copronomie',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+  alternates: {
+    canonical: '/'
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    url: '/',
+    siteName: 'Copronomie',
+    title: 'Copronomie - La plateforme qui simplifie les travaux de copropriété',
+    description: 'Simplifiez la gestion de vos travaux de copropriété. Publiez vos projets, recevez des devis qualifiés et choisissez la meilleure offre en quelques clics.',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Copronomie - Plateforme de gestion de travaux de copropriété'
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Copronomie - La plateforme qui simplifie les travaux de copropriété',
+    description: 'Simplifiez la gestion de vos travaux de copropriété avec Copronomie',
+    images: ['/og-image.png'],
+    creator: '@copronomie'
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1
+    }
+  },
+  verification: {
+    google: 'verification_token',
+    yandex: 'verification_token'
+  },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true
+  },
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#F7F6F7' },
+    { media: '(prefers-color-scheme: dark)', color: '#1B0C25' }
+  ],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Copronomie'
+  },
+  formatDetection: {
+    telephone: false
+  }
 }
 
 export default function RootLayout({
