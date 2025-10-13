@@ -1,5 +1,7 @@
 'use client'
 
+import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import { Zap, Building2, BarChart3, Bell, Mail, Lock } from 'lucide-react'
 import { Container } from '../ui'
 import { FeatureCard } from './FeatureCard'
@@ -38,18 +40,27 @@ const features = [
 ]
 
 export function Features() {
+  const headerRef = useRef(null)
+  const isHeaderInView = useInView(headerRef, { once: true, margin: '-100px' })
+
   return (
     <section id="features" className="py-24 bg-white">
       <Container>
         {/* Header */}
-        <div className="text-center mb-16 max-w-3xl mx-auto">
+        <motion.div
+          ref={headerRef}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center mb-16 max-w-3xl mx-auto"
+        >
           <h2 className="text-4xl md:text-5xl font-bold text-landing-primary mb-4">
             Tout ce dont vous avez besoin
           </h2>
           <p className="text-xl text-landing-primary/70">
             Des fonctionnalités puissantes pour simplifier votre quotidien
           </p>
-        </div>
+        </motion.div>
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
