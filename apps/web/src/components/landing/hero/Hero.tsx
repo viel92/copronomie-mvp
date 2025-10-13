@@ -1,0 +1,121 @@
+'use client'
+
+import { motion } from 'framer-motion'
+import Link from 'next/link'
+import { Button, Badge, Container } from '../ui'
+import { HeroTitle } from './HeroTitle'
+
+export function Hero() {
+  return (
+    <section
+      id="hero"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20"
+    >
+      {/* Background with gradient - Will be replaced with image later */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-50 via-purple-50 to-landing-light" />
+        {/* Decorative blur orbs */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob" />
+        <div className="absolute top-40 right-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000" />
+        <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000" />
+      </div>
+
+      <Container>
+        <div className="text-center space-y-8 max-w-5xl mx-auto">
+          {/* Badge with icon */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex justify-center"
+          >
+            <Badge icon="⚡">Syndics & Copropriétaires</Badge>
+          </motion.div>
+
+          {/* Animated Title - Exactly like Framer template */}
+          <HeroTitle
+            text="La plateforme qui réinvente la gestion des devis en copropriété"
+            className="text-5xl md:text-6xl lg:text-7xl font-bold text-landing-primary leading-tight"
+          />
+
+          {/* Subtitle */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.5 }}
+            className="text-xl md:text-2xl text-landing-primary/80 max-w-3xl mx-auto"
+          >
+            Publiez vos projets, recevez des devis qualifiés et trouvez les
+            meilleurs artisans pour votre copropriété. Sans effort.
+          </motion.p>
+
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2, duration: 0.5 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          >
+            <Button size="lg" asChild>
+              <Link href="/register">Commencer gratuitement →</Link>
+            </Button>
+            <Button size="lg" variant="secondary" asChild>
+              <a href="#features">Découvrir</a>
+            </Button>
+          </motion.div>
+
+          {/* Trust Badges */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.6, duration: 0.5 }}
+            className="flex flex-wrap items-center justify-center gap-6 text-sm text-landing-primary/70"
+          >
+            <span className="flex items-center gap-2">
+              <svg
+                className="w-4 h-4 text-green-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Gratuit pendant 30 jours
+            </span>
+            <span className="flex items-center gap-2">
+              <svg
+                className="w-4 h-4 text-green-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Sans carte bancaire
+            </span>
+            <span className="flex items-center gap-2">
+              <svg
+                className="w-4 h-4 text-green-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Configuration en 5 minutes
+            </span>
+          </motion.div>
+        </div>
+      </Container>
+    </section>
+  )
+}
