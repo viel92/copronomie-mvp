@@ -26,6 +26,10 @@ export function FeatureCard({ icon: Icon, title, description, index }: FeatureCa
         duration: 0.5,
         ease: [0.22, 1, 0.36, 1],
       }}
+      whileHover={{
+        y: -4,
+        transition: { duration: 0.3, ease: 'easeOut' }
+      }}
     >
       <Card className="h-full">
         <div className="flex flex-col items-start space-y-4">

@@ -15,8 +15,8 @@ export function Hero() {
 
   // Parallax et fade effects au scroll
   const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
-  const contentScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
+  const contentScale = useTransform(scrollYProgress, [0, 0.7], [1, 0.98])
 
   return (
     <section
@@ -34,12 +34,12 @@ export function Hero() {
         <motion.div
           className="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20"
           animate={{
-            y: [0, -30, 0],
-            x: [0, 20, 0],
-            scale: [1, 1.1, 1]
+            y: [0, -15, 0],
+            x: [0, 10, 0],
+            scale: [1, 1.05, 1]
           }}
           transition={{
-            duration: 8,
+            duration: 15,
             repeat: Infinity,
             ease: 'easeInOut'
           }}
@@ -47,12 +47,12 @@ export function Hero() {
         <motion.div
           className="absolute top-40 right-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20"
           animate={{
-            y: [0, 40, 0],
-            x: [0, -30, 0],
-            scale: [1, 1.15, 1]
+            y: [0, 20, 0],
+            x: [0, -15, 0],
+            scale: [1, 1.08, 1]
           }}
           transition={{
-            duration: 10,
+            duration: 18,
             repeat: Infinity,
             ease: 'easeInOut',
             delay: 1
@@ -61,12 +61,12 @@ export function Hero() {
         <motion.div
           className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20"
           animate={{
-            y: [0, -20, 0],
-            x: [0, 30, 0],
-            scale: [1, 1.2, 1]
+            y: [0, -10, 0],
+            x: [0, 15, 0],
+            scale: [1, 1.1, 1]
           }}
           transition={{
-            duration: 12,
+            duration: 20,
             repeat: Infinity,
             ease: 'easeInOut',
             delay: 2
@@ -83,7 +83,7 @@ export function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.4 }}
             className="flex justify-center"
           >
             <Badge icon="⚡">Syndics & Copropriétaires</Badge>
@@ -99,7 +99,7 @@ export function Hero() {
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
             className="text-xl md:text-2xl text-landing-primary/80 max-w-3xl mx-auto"
           >
             Publiez vos projets, recevez des devis qualifiés et trouvez les
@@ -110,7 +110,7 @@ export function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2, duration: 0.5 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
             <Button size="lg" asChild>
@@ -125,7 +125,7 @@ export function Hero() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.6, duration: 0.5 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
             className="flex flex-wrap items-center justify-center gap-6 text-sm text-landing-primary/70"
           >
             <span className="flex items-center gap-2">

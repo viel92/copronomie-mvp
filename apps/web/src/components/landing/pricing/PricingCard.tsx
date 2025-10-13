@@ -37,8 +37,8 @@ export function PricingCard({
         ease: [0.22, 1, 0.36, 1]
       }}
       whileHover={{
-        y: -12,
-        scale: popular ? 1.02 : 1.05,
+        y: -4,
+        scale: popular ? 1.02 : 1.03,
         transition: { duration: 0.3, ease: 'easeOut' }
       }}
       className="h-full"

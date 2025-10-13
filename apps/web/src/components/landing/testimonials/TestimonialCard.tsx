@@ -16,7 +16,7 @@ export function TestimonialCard({ quote, author, role, company, index = 0 }: Tes
   return (
     <motion.div
       whileHover={{
-        y: -8,
+        y: -4,
         transition: { duration: 0.3, ease: 'easeOut' }
       }}
       className="h-full"
@@ -24,13 +24,9 @@ export function TestimonialCard({ quote, author, role, company, index = 0 }: Tes
       <Card className="h-full flex flex-col justify-between p-8 transition-shadow duration-300 hover:shadow-xl">
         {/* Quote Icon */}
         <div className="mb-6">
-          <motion.div
-            className="w-12 h-12 bg-landing-primary/10 rounded-full flex items-center justify-center"
-            whileHover={{ rotate: 360 }}
-            transition={{ duration: 0.6 }}
-          >
+          <div className="w-12 h-12 bg-landing-primary/10 rounded-full flex items-center justify-center">
             <Quote className="w-6 h-6 text-landing-primary" />
-          </motion.div>
+          </div>
         </div>
 
       {/* Quote Text */}
