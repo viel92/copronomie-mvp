@@ -1,5 +1,6 @@
 import { Navigation } from '@/components/landing/navigation'
 import { Hero } from '@/components/landing/hero'
+import { Stats } from '@/components/landing/stats'
 import { Features } from '@/components/landing/features'
 import { About } from '@/components/landing/about'
 import { Testimonials } from '@/components/landing/testimonials'
@@ -15,6 +16,7 @@ export default function HomePage() {
       <Navigation />
       <main className="min-h-screen">
         <Hero />
+        <Stats />
         <Features />
         <About />
         <Testimonials />

@@ -34,16 +34,16 @@ export function Navigation() {
       transition={{ duration: 0.5 }}
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        scrolled ? 'py-2' : 'py-4'
+        scrolled && 'shadow-sm'
       )}
     >
-      <div className="container mx-auto px-4 max-w-7xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1240px]">
         <div
           className={cn(
-            'backdrop-blur-md border rounded-2xl transition-all duration-300 px-6 py-4',
+            'backdrop-blur-lg border rounded-2xl transition-all duration-300 px-6 py-4',
             scrolled
-              ? 'bg-white/60 border-white/25 shadow-card'
-              : 'bg-white/10 border-white/25'
+              ? 'bg-white/90 border-gray-100 shadow-card'
+              : 'bg-white/60 border-landing-overlay-strong'
           )}
         >
           <div className="flex items-center justify-between">
