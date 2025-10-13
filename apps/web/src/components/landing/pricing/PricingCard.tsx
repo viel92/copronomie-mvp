@@ -36,10 +36,15 @@ export function PricingCard({
         duration: 0.6,
         ease: [0.22, 1, 0.36, 1]
       }}
+      whileHover={{
+        y: -12,
+        scale: popular ? 1.02 : 1.05,
+        transition: { duration: 0.3, ease: 'easeOut' }
+      }}
       className="h-full"
     >
       <Card
-        className={`h-full flex flex-col relative ${popular ? 'ring-2 ring-landing-primary shadow-card-hover' : ''}`}
+        className={`h-full flex flex-col relative transition-shadow duration-300 ${popular ? 'ring-2 ring-landing-primary shadow-card-hover' : 'hover:shadow-xl'}`}
       >
         {popular && (
           <div className="absolute -top-4 left-1/2 -translate-x-1/2">

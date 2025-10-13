@@ -1,27 +1,84 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { useRef } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import Link from 'next/link'
 import { Button, Badge, Container } from '../ui'
 import { HeroTitle } from './HeroTitle'
 
 export function Hero() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start']
+  })
+
+  // Parallax et fade effects au scroll
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+  const contentScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95])
+
   return (
     <section
+      ref={sectionRef}
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20"
     >
-      {/* Background with gradient - Will be replaced with image later */}
-      <div className="absolute inset-0 -z-10">
+      {/* Background with gradient and parallax */}
+      <motion.div
+        className="absolute inset-0 -z-10"
+        style={{ y: backgroundY }}
+      >
         <div className="absolute inset-0 bg-gradient-to-b from-blue-50 via-purple-50 to-landing-light" />
-        {/* Decorative blur orbs */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob" />
-        <div className="absolute top-40 right-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000" />
-        <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000" />
-      </div>
+        {/* Decorative blur orbs with floating animations */}
+        <motion.div
+          className="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20"
+          animate={{
+            y: [0, -30, 0],
+            x: [0, 20, 0],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: 'easeInOut'
+          }}
+        />
+        <motion.div
+          className="absolute top-40 right-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20"
+          animate={{
+            y: [0, 40, 0],
+            x: [0, -30, 0],
+            scale: [1, 1.15, 1]
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: 1
+          }}
+        />
+        <motion.div
+          className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20"
+          animate={{
+            y: [0, -20, 0],
+            x: [0, 30, 0],
+            scale: [1, 1.2, 1]
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: 2
+          }}
+        />
+      </motion.div>
 
       <Container>
-        <div className="text-center space-y-8 max-w-5xl mx-auto">
+        <motion.div
+          className="text-center space-y-8 max-w-5xl mx-auto"
+          style={{ opacity: contentOpacity, scale: contentScale }}
+        >
           {/* Badge with icon */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -114,7 +171,7 @@ export function Hero() {
               Configuration en 5 minutes
             </span>
           </motion.div>
-        </div>
+        </motion.div>
       </Container>
     </section>
   )
