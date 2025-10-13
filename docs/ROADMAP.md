@@ -262,13 +262,24 @@ Semaine 3: Deploy Beta + Ajustements
 - ✅ SSL Certbot (Let's Encrypt) configuré avec auto-renew
 - ✅ Tests production déployée (HTTP 200 OK sur tous endpoints)
 
-#### Jour 14: Monitoring Basique - ⚠️ TODO
-- [ ] Setup Sentry (gratuit) frontend + backend
-- [ ] Logging Winston API avec rotation
+#### Jour 14: Monitoring Basique - ✅ COMPLÉTÉ
+- ✅ Setup Sentry (gratuit) frontend + backend
+  - Frontend DSN: `https://c01df0be...copronomie-web`
+  - Backend DSN: `https://d0f7ba13...copronomie-api`
+  - Configuration: client, server, edge runtimes
+  - Sampling: 10% en production, 100% en dev
+  - Session replay activé (erreurs uniquement)
+- ✅ Script de déploiement automatisé avec:
+  - Rollback automatique sur échec (trap ERR)
+  - Health checks avec retry (5 tentatives)
+  - Logs détaillés timestampés
+  - Nettoyage images Docker
+  - Tracking commits Git
 - ✅ Health check endpoint API (`/health`) - déjà existant
+- [ ] Logging Winston API avec rotation (reporté post-MVP)
 - [ ] Test monitoring avec erreurs volontaires
 
-**CHECKPOINT SEMAINE 2:** ✅ Application déployée en staging HTTPS, accessible publiquement, conteneurs healthy
+**CHECKPOINT SEMAINE 2:** ✅ Application déployée en staging HTTPS, accessible publiquement, conteneurs healthy, monitoring Sentry actif, déploiement automatisé
 
 ---
 
@@ -850,8 +861,367 @@ Transformer le MVP beta en produit production-ready basé sur feedback utilisate
 
 ---
 
-**Dernière mise à jour:** 12 Octobre 2025
+**Dernière mise à jour:** 13 Octobre 2025
 **Prochaine révision:** Après déploiement production
+
+---
+
+## MISE À JOUR 13 OCTOBRE 2025 - AUTOMATION & MONITORING ✅
+
+### Déploiement Automatisé - Script Robuste
+**Problème identifié:** Script initial de déploiement incomplet, manque de tests/rollback/logs
+**Solution implémentée:** Script `deploy-staging.sh` avec fonctionnalités avancées
+
+#### Fonctionnalités du Script ✅
+- ✅ **Rollback automatique sur échec**
+  - Fonction `rollback()` activée via `trap ERR`
+  - Restauration conteneurs précédents si déploiement échoue
+  - Sauvegarde docker-compose.yml avant déploiement
+- ✅ **Tests de santé (Health Checks)**
+  - 5 tentatives par service avec intervalle 5s
+  - Tests locaux: `curl http://localhost:3000` et `http://localhost:4000/health`
+  - Tests HTTPS publics: `curl https://staging-app.copronomie.fr` et API
+  - Validation HTTP 200 requise pour succès
+- ✅ **Logs détaillés**
+  - Fichiers timestampés: `deploy-YYYYMMDD-HHMMSS.log`
+  - Logs colorés console (✅ succès, ❌ erreurs, ℹ️ info)
+  - Affichage simultané console + fichier via `tee`
+- ✅ **Tracking Git**
+  - Enregistrement commit hash dans logs
+  - Backup de l'état avant déploiement
+- ✅ **Nettoyage ressources**
+  - Suppression images Docker inutilisées (`docker image prune`)
+  - Économie espace disque sur VPS
+
+#### Déploiement Réussi - Log du 13/10/2025
+```
+[2025-10-13 19:39:37] ✅ DÉPLOIEMENT RÉUSSI!
+📊 Résumé:
+  - Commit: ac6e4752d3ab6240db863b1058c144e2dcba6781
+  - API: http://localhost:4000 (HTTP 200)
+  - Web: http://localhost:3000 (HTTP 200)
+
+🌐 URLs Publiques:
+  - Frontend: https://staging-app.copronomie.fr (HTTP 200)
+  - API: https://staging-api.copronomie.fr (HTTP 200)
+
+Conteneurs:
+- copronomie-mvp-api-1 (Status: healthy)
+- copronomie-mvp-web-1 (Status: healthy)
+```
+
+### Monitoring Sentry - Configuration Complète ✅
+
+#### Backend (Hono API)
+**Fichiers créés:**
+- `apps/api/src/lib/sentry.ts` - Initialization avec profiling
+- Configuration dans `apps/api/src/index.ts` - Error handler intégré
+
+**Caractéristiques:**
+- ✅ Capture automatique exceptions via `app.onError()`
+- ✅ Profiling Node.js activé (`@sentry/profiling-node`)
+- ✅ Filtrage erreurs health check (évite spam)
+- ✅ Sampling: 10% production, 100% dev
+- ✅ Environment tagging (production/development)
+- ✅ DSN configuré: `https://d0f7ba13b81872545dd699fbe9c0ab1a@o4509859167600640.ingest.de.sentry.io/4510183809613904`
+
+#### Frontend (Next.js 15)
+**Fichiers créés:**
+- `apps/web/sentry.client.config.ts` - Client-side avec session replay
+- `apps/web/sentry.server.config.ts` - Server-side rendering
+- `apps/web/sentry.edge.config.ts` - Edge runtime
+- `apps/web/next.config.js` - Wrapping Sentry webpack plugin
+
+**Caractéristiques:**
+- ✅ Session Replay activé (100% erreurs, 10% sessions normales)
+- ✅ Masquage PII (maskAllText, blockAllMedia)
+- ✅ Capture erreurs SSR et client-side
+- ✅ Source maps upload automatique (build)
+- ✅ Filtrage erreurs timeout (évite bruit)
+- ✅ Sampling: 10% production, 100% dev
+- ✅ DSN configuré: `https://c01df0be3974cda54aeb98cbba65b5b2@o4509859167600640.ingest.de.sentry.io/4510183804371024`
+
+#### Packages Installés
+- `@sentry/nextjs@^10.19.0` (apps/web)
+- `@sentry/node@^10.19.0` (apps/api)
+- `@sentry/profiling-node@^10.19.0` (apps/api)
+
+### Workflow Complet Réalisé
+1. ✅ Création script de déploiement robuste avec tests/rollback/logs
+2. ✅ Commit: `feat: Add robust deployment automation with rollback and health checks`
+3. ✅ Installation packages Sentry frontend + backend
+4. ✅ Configuration Sentry (4 fichiers config + wrapper Next.js)
+5. ✅ Modification error handler API pour capture Sentry
+6. ✅ Mise à jour .env.staging (frontend + backend) avec DSN keys
+7. ✅ Commit: `feat: Add Sentry monitoring for frontend and backend`
+8. ✅ Push vers GitHub (`git push origin master`)
+9. ✅ Pull sur VPS (`git pull origin master`)
+10. ✅ Exécution `./deploy-staging.sh` avec succès total
+11. ✅ Vérification conteneurs healthy + endpoints HTTPS opérationnels
+
+### Prochaines Actions - Avant Production
+1. [ ] Tests manuels workflow complet sur staging (browser)
+2. [ ] Tester Sentry en déclenchant erreur volontaire
+3. [ ] **Migration Landing Page (Template Framer)** - 5 jours
+4. [ ] Déployer VPS 2 - PRODUCTION (même setup que staging)
+5. [ ] Configurer DNS production (app.copronomie.fr, api.copronomie.fr)
+6. [ ] Configuration SSL Certbot pour production
+7. [ ] Tests workflow sur PRODUCTION
+8. [ ] Setup backup automatique database
+
+---
+
+## MIGRATION LANDING PAGE - Template Framer "Fluence AI" [5 JOURS]
+
+### Vue d'ensemble
+**Template source:** `C:\Users\sekou\Downloads\f274540d-407e-4f77-854a-500457b80df0`
+**Objectif:** Créer une landing page professionnelle pour convertir les visiteurs en utilisateurs
+**Documentation:** Voir `docs/FRAMER_TEMPLATE_ANALYSIS.md` et `docs/LANDING_PAGE_FRAMER.md`
+
+### Jour 1: Setup & Composants de Base (8h)
+
+#### Setup Initial
+- [ ] Créer structure dossiers `apps/web/src/components/landing/`
+- [ ] Installer dépendances:
+  ```bash
+  pnpm add framer-motion embla-carousel-react lucide-react
+  pnpm add react-hook-form zod @hookform/resolvers  # Pour formulaire contact
+  pnpm add tailwindcss-animate  # Pour animations scroll
+  ```
+- [ ] Configurer fonts dans `apps/web/src/app/layout.tsx`:
+  - Inter (Google Fonts)
+  - DM Sans (Alternative à General Sans)
+- [ ] Étendre `tailwind.config.ts` avec:
+  - Couleurs landing (primary, light, border)
+  - Shadows (glass, card, card-hover)
+  - Border radius (pill: 99px)
+  - Backdrop blur variants
+
+#### Composants UI Réutilisables
+- [ ] `components/landing/ui/Button.tsx` avec variantes (primary, secondary, outline)
+- [ ] `components/landing/ui/Card.tsx` avec effet glassmorphism
+- [ ] `components/landing/ui/Badge.tsx` avec blur effect
+- [ ] `components/landing/ui/Container.tsx` pour layout wrapper
+
+#### Route Group Landing
+- [ ] Créer `apps/web/src/app/(landing)/layout.tsx` (sans nav app)
+- [ ] Modifier homepage `apps/web/src/app/(landing)/page.tsx`
+
+### Jour 2: Navigation & Hero (8h)
+
+#### Navigation Sticky
+- [ ] `components/landing/navigation/Navigation.tsx`:
+  - Sticky avec blur on scroll
+  - Logo + menu desktop
+  - CTA "Contact"
+- [ ] `components/landing/navigation/MobileMenu.tsx`:
+  - Hamburger menu responsive
+- [ ] `components/landing/navigation/NavLink.tsx`:
+  - Liens avec active state
+
+#### Hero Section avec Animations
+- [ ] `components/landing/hero/Hero.tsx`:
+  - Background image avec overlay gradient
+  - Layout centré
+- [ ] `components/landing/hero/HeroTitle.tsx`:
+  - Animation mot par mot (opacity + translateY + blur)
+  - Utilisation Framer Motion variants
+- [ ] `components/landing/hero/HeroCTA.tsx`:
+  - 2 boutons CTA (primary + secondary)
+  - Trust badges sous les CTAs
+
+### Jour 3: Features & About (8h)
+
+#### Features Section
+- [ ] `components/landing/features/Features.tsx`:
+  - Grille responsive (1/2/3 cols)
+  - Animation scroll (useInView)
+- [ ] `components/landing/features/FeatureCard.tsx`:
+  - Card avec icône (lucide-react)
+  - Hover effect (translateY + shadow)
+- [ ] Contenu: 6 features principales:
+  1. Publication express
+  2. Base d'entreprises qualifiées
+  3. Comparaison instantanée
+  4. Notifications temps réel
+  5. Emails automatiques
+  6. Données sécurisées
+
+#### About Section
+- [ ] `components/landing/about/About.tsx`:
+  - Layout alterné (image + texte)
+  - Liste de bénéfices avec checkmarks
+  - Screenshot dashboard en mockup 3D
+
+### Jour 4: Testimonials, Pricing & FAQ (8h)
+
+#### Testimonials avec Carousel
+- [ ] `components/landing/testimonials/Testimonials.tsx`:
+  - Integration Embla Carousel
+  - Autoplay (5s delay)
+- [ ] `components/landing/testimonials/TestimonialCard.tsx`:
+  - Photo ronde + citation + rating étoiles
+  - Nom + rôle
+- [ ] Contenu: 3 témoignages (Jean-Marc, Sophie, Cabinet Durand)
+
+#### Pricing Section
+- [ ] `components/landing/pricing/Pricing.tsx`:
+  - 3 plans (Free, Pro, Enterprise)
+- [ ] `components/landing/pricing/PricingCard.tsx`:
+  - Card avec badge "Most Popular" pour Pro
+  - Liste features avec checkmarks
+  - CTA différencié par plan
+
+#### FAQ Section
+- [ ] `components/landing/faq/FAQ.tsx`:
+  - Layout grille ou liste
+- [ ] `components/landing/faq/FAQItem.tsx`:
+  - Accordéon expand/collapse (Framer Motion)
+- [ ] Contenu: 8 questions principales
+
+#### Footer
+- [ ] `components/landing/footer/Footer.tsx`:
+  - 5 colonnes: Logo, Produit, Ressources, Entreprise, Légal
+  - Social links (LinkedIn, Twitter)
+  - Copyright + SIRET
+
+### Jour 5: Pages, Assets & Optimisation (8h)
+
+#### Pages Additionnelles
+- [ ] `apps/web/src/app/(landing)/contact/page.tsx`:
+  - Formulaire avec react-hook-form + zod
+  - Fields: Nom, Email, Message
+  - Integration avec EmailService backend
+- [ ] `apps/web/src/app/(landing)/legal/privacy/page.tsx`:
+  - Politique de confidentialité (texte juridique)
+- [ ] `apps/web/src/app/(landing)/legal/terms/page.tsx`:
+  - Conditions d'utilisation (texte juridique)
+
+#### Assets & Images
+- [ ] Créer/télécharger images:
+  - `public/images/landing/hero-bg.webp` (2400x1345px)
+  - Screenshots dashboard (1200x800px)
+  - Photos testimonials (80x80px) ou UI Avatars placeholder
+  - OG image (1200x630px)
+- [ ] Optimiser images en WebP avec Sharp
+- [ ] Ajouter favicon
+
+#### SEO & Metadata
+- [ ] Metadata sur `page.tsx`:
+  - Title, description, keywords
+  - OpenGraph tags (og:title, og:image)
+  - Twitter card
+- [ ] Créer `public/sitemap.xml`
+- [ ] Créer `public/robots.txt`
+- [ ] Test Lighthouse (objectif: >90)
+
+#### Tests & Polish
+- [ ] Responsive testing:
+  - Mobile (320px-767px)
+  - Tablet (768px-1023px)
+  - Desktop (1024px+)
+- [ ] Animation timing adjustments
+- [ ] Accessibility check (alt texts, keyboard navigation)
+- [ ] Cross-browser testing (Chrome, Firefox, Safari)
+
+### Checklist de Validation
+
+#### Fonctionnel
+- [ ] Navigation sticky fonctionne sur scroll
+- [ ] Menu mobile s'ouvre/ferme correctement
+- [ ] Animations hero title se jouent au chargement
+- [ ] Scroll animations se déclenchent au bon moment
+- [ ] Carousel testimonials avec autoplay
+- [ ] Accordéons FAQ expand/collapse
+- [ ] Formulaire contact valide et envoie
+
+#### Design
+- [ ] Glassmorphism effect correct (blur + border)
+- [ ] Shadows cohérentes sur tous les cards
+- [ ] Hover effects fluides
+- [ ] Typography hiérarchie respectée (H1 > H2 > H3)
+- [ ] Spacing uniforme (padding, margin)
+
+#### Performance
+- [ ] Images optimisées (WebP, lazy loading)
+- [ ] Lighthouse score >90
+- [ ] First Contentful Paint <2s
+- [ ] Time to Interactive <3s
+- [ ] No layout shift (CLS <0.1)
+
+#### SEO
+- [ ] Meta title <60 caractères
+- [ ] Meta description <160 caractères
+- [ ] H1 unique par page
+- [ ] Alt text sur toutes images
+- [ ] Sitemap.xml accessible
+- [ ] Robots.txt configuré
+
+### Intégration avec l'Application
+
+#### Liens Navigation
+- [ ] "Commencer gratuitement" → `/register`
+- [ ] "Se connecter" → `/login`
+- [ ] Si user connecté, afficher "Dashboard" au lieu de "Se connecter"
+
+#### Cohérence Visuelle
+- [ ] Footer landing = Footer app (ou cohérent)
+- [ ] Boutons même design system
+- [ ] Couleurs primary/secondary alignées
+
+### Déploiement Landing Page
+
+#### Staging
+- [ ] Deploy sur `https://staging-app.copronomie.fr/`
+- [ ] Tests complets sur staging
+- [ ] Feedback équipe/beta testers
+
+#### Production
+- [ ] Deploy sur `https://app.copronomie.fr/` (ou `copronomie.fr`)
+- [ ] Vérifier SEO indexation Google
+- [ ] Monitorer analytics (Google Analytics ou Plausible)
+
+### Assets à Préparer (Liste Exhaustive)
+
+#### Images
+```
+public/images/landing/
+├── hero-bg.webp                    # 2400x1345px - Gradient moderne
+├── features/
+│   ├── dashboard.webp              # Screenshot dashboard
+│   ├── quotes.webp                 # Screenshot comparaison devis
+│   └── project.webp                # Screenshot création projet
+├── testimonials/
+│   ├── jean-marc.jpg               # 80x80px
+│   ├── sophie.jpg                  # 80x80px
+│   └── durand.jpg                  # Logo entreprise 80x80px
+├── og-image.png                     # 1200x630px
+└── favicon.ico                      # 32x32px
+```
+
+#### Fonts
+- Inter (Google Fonts - déjà disponible)
+- DM Sans (alternative gratuite à General Sans)
+
+#### Icons
+- Utiliser lucide-react pour toutes les icônes
+- Pas besoin de fichiers SVG séparés
+
+### Alternatives si Timeline Trop Serrée
+
+#### Option A: Migration Partielle (3 jours)
+Si besoin de déployer plus vite:
+- Jour 1: Setup + Navigation + Hero
+- Jour 2: Features + Pricing
+- Jour 3: FAQ + Footer + Tests
+- **Sauter:** About, Testimonials (versions simples sans animations)
+
+#### Option B: Utiliser Template Next.js Existant (2 jours)
+- Chercher template Next.js SaaS déjà converti
+- Exemples: shadcn/ui templates, Tailwind UI Spotlight
+- Plus rapide mais moins unique
+
+**Recommandation:** Migration complète (5 jours) pour meilleur résultat
 
 ---
 

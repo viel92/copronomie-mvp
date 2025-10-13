@@ -4,7 +4,11 @@ import './globals.css'
 import { TRPCProvider } from '@/components/providers/TRPCProvider'
 import { AuthProvider } from '@/components/providers/AuthProvider'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap'
+})
 
 export const metadata: Metadata = {
   title: 'Copronomie V2 - Gestion de Copropriétés',
@@ -18,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className={inter.className}>
+      <body className={`${inter.variable} font-inter antialiased`}>
         <AuthProvider>
           <TRPCProvider>
             {children}
