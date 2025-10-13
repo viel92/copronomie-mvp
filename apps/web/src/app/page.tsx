@@ -2,6 +2,10 @@ import { Navigation } from '@/components/landing/navigation'
 import { Hero } from '@/components/landing/hero'
 import { Features } from '@/components/landing/features'
 import { About } from '@/components/landing/about'
+import { Testimonials } from '@/components/landing/testimonials'
+import { Pricing } from '@/components/landing/pricing'
+import { FAQ } from '@/components/landing/faq'
+import { Footer } from '@/components/landing/footer'
 
 export default function HomePage() {
   return (
@@ -11,29 +15,11 @@ export default function HomePage() {
         <Hero />
         <Features />
         <About />
-
-        {/* Placeholder sections - Will be added in Jour 4 */}
-        <section id="pricing" className="min-h-screen flex items-center justify-center bg-white">
-          <div className="text-center">
-            <h2 className="text-4xl font-bold text-landing-primary mb-4">Pricing Section</h2>
-            <p className="text-landing-primary/70">Coming in Jour 4...</p>
-          </div>
-        </section>
-
-        <section id="testimonials" className="min-h-screen flex items-center justify-center bg-landing-light">
-          <div className="text-center">
-            <h2 className="text-4xl font-bold text-landing-primary mb-4">Testimonials Section</h2>
-            <p className="text-landing-primary/70">Coming in Jour 4...</p>
-          </div>
-        </section>
-
-        <section id="faq" className="min-h-screen flex items-center justify-center bg-white">
-          <div className="text-center">
-            <h2 className="text-4xl font-bold text-landing-primary mb-4">FAQ Section</h2>
-            <p className="text-landing-primary/70">Coming in Jour 4...</p>
-          </div>
-        </section>
+        <Testimonials />
+        <Pricing />
+        <FAQ />
       </main>
+      <Footer />
     </>
   )
 }
