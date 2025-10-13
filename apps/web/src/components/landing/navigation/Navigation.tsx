@@ -33,19 +33,20 @@ export function Navigation() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
       className={cn(
-        'fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-7xl px-4 transition-all duration-300',
-        scrolled && 'top-2'
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+        scrolled ? 'py-2' : 'py-4'
       )}
     >
-      <div
-        className={cn(
-          'backdrop-blur-md border rounded-2xl transition-all duration-300 px-6 py-4',
-          scrolled
-            ? 'bg-white/60 border-white/25 shadow-card'
-            : 'bg-white/10 border-white/25'
-        )}
-      >
-        <div className="flex items-center justify-between">
+      <div className="container mx-auto px-4 max-w-7xl">
+        <div
+          className={cn(
+            'backdrop-blur-md border rounded-2xl transition-all duration-300 px-6 py-4',
+            scrolled
+              ? 'bg-white/60 border-white/25 shadow-card'
+              : 'bg-white/10 border-white/25'
+          )}
+        >
+          <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="w-10 h-10 bg-landing-primary rounded-lg flex items-center justify-center text-white font-bold text-xl transition-transform group-hover:scale-105">
@@ -115,6 +116,7 @@ export function Navigation() {
             </div>
           </motion.div>
         )}
+        </div>
       </div>
     </motion.nav>
   )
