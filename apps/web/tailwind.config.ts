@@ -99,48 +99,19 @@ const config: Config = {
         'lead': ['18px', { lineHeight: '28px', fontWeight: '400' }],
       },
       spacing: {
-        // Framer Spacing Tokens
-        // Sections
+        // Framer Spacing Tokens (custom only, extends default Tailwind spacing)
         'section-lg': '160px',
         'section-md': '120px',
         'section-sm': '80px',
-
-        // Cards
         'card-outer-lg': '40px',
         'card-outer-md': '32px',
         'card-outer-sm': '24px',
         'card-inner-lg': '32px',
         'card-inner-md': '24px',
         'card-inner-sm': '16px',
-
-        // Elements
         'el-lg': '32px',
         'el-md': '16px',
         'el-sm': '8px',
-
-        // Stack/Grid gaps
-        '8': '8px',
-        '12': '12px',
-        '16': '16px',
-        '24': '24px',
-        '32': '32px',
-        '40': '40px',
-        '60': '60px',
-        '100': '100px',
-      },
-      gap: {
-        // Framer Gap tokens for flex/grid
-        '8': '8px',
-        '10': '10px',
-        '12': '12px',
-        '16': '16px',
-        '20': '20px',
-        '24': '24px',
-        '32': '32px',
-        '40': '40px',
-        '60': '60px',
-        '100': '100px',
-        '160': '160px',
       },
       borderRadius: {
         ...sharedConfig.theme?.extend?.borderRadius,

@@ -11,21 +11,21 @@ const steps = [
     title: 'Publiez votre projet',
     description:
       'Décrivez vos travaux de copropriété en quelques clics. Ajoutez photos, plans et détails techniques pour permettre aux artisans de bien comprendre vos besoins.',
-    color: 'landing-blue',
+    iconColor: 'text-landing-blue',
   },
   {
     icon: Search,
     title: 'Recevez des devis qualifiés',
     description:
       'Nos artisans vérifiés étudient votre projet et vous envoient des devis détaillés. Comparez facilement les offres et posez vos questions directement.',
-    color: 'landing-purple',
+    iconColor: 'text-landing-purple',
   },
   {
     icon: CheckCircle,
     title: 'Choisissez et validez',
     description:
       'Sélectionnez l\'artisan qui correspond le mieux à vos besoins et budget. Suivez l\'avancement de vos travaux en temps réel sur votre tableau de bord.',
-    color: 'landing-orange',
+    iconColor: 'text-landing-orange',
   },
 ]
 
@@ -83,7 +83,7 @@ export function HowItWorks() {
               {/* Icon */}
               <div className="mb-6 w-16 h-16 md:w-20 md:h-20 rounded-medium bg-landing-blue-lite flex items-center justify-center">
                 <step.icon
-                  className={`w-8 h-8 md:w-10 md:h-10 text-${step.color}`}
+                  className={`w-8 h-8 md:w-10 md:h-10 ${step.iconColor}`}
                   strokeWidth={1.5}
                 />
               </div>
