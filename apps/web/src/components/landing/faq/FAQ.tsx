@@ -1,5 +1,7 @@
 'use client'
 
+import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import { Container } from '../ui'
 import { FAQItem } from './FAQItem'
 
@@ -39,28 +41,54 @@ const faqs = [
 ]
 
 export function FAQ() {
+  const headerRef = useRef(null)
+  const listRef = useRef(null)
+  const isHeaderInView = useInView(headerRef, { once: true, margin: '-100px' })
+  const isListInView = useInView(listRef, { once: true, margin: '-100px' })
+
   return (
     <section id="faq" className="py-24 bg-landing-light">
       <Container>
         {/* Header */}
-        <div className="text-center mb-16 max-w-3xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-landing-primary mb-4">
+        <div ref={headerRef} className="text-center mb-16 max-w-3xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="text-4xl md:text-5xl font-bold text-landing-primary mb-4"
+          >
             Questions fréquentes
-          </h2>
-          <p className="text-xl text-landing-primary/70">
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="text-xl text-landing-primary/70"
+          >
             Tout ce que vous devez savoir sur Copronomie
-          </p>
+          </motion.p>
         </div>
 
         {/* FAQ List */}
-        <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-card p-8">
+        <motion.div
+          ref={listRef}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isListInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="max-w-4xl mx-auto bg-white rounded-2xl shadow-card p-8"
+        >
           {faqs.map((faq, index) => (
             <FAQItem key={index} {...faq} />
           ))}
-        </div>
+        </motion.div>
 
         {/* Bottom CTA */}
-        <div className="text-center mt-12">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isListInView ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.5, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center mt-12"
+        >
           <p className="text-landing-primary/70">
             Vous avez d'autres questions ?{' '}
             <a
@@ -70,7 +98,7 @@ export function FAQ() {
               Contactez-nous
             </a>
           </p>
-        </div>
+        </motion.div>
       </Container>
     </section>
   )

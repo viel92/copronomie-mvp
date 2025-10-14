@@ -1,6 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import useEmblaCarousel from 'embla-carousel-react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Container } from '../ui'
@@ -34,6 +35,9 @@ const testimonials = [
 ]
 
 export function Testimonials() {
+  const headerRef = useRef(null)
+  const isInView = useInView(headerRef, { once: true, margin: '-100px' })
+
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: 'start',
@@ -67,13 +71,23 @@ export function Testimonials() {
     <section id="testimonials" className="py-24 bg-landing-light">
       <Container>
         {/* Header */}
-        <div className="text-center mb-16 max-w-3xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-landing-primary mb-4">
+        <div ref={headerRef} className="text-center mb-16 max-w-3xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="text-4xl md:text-5xl font-bold text-landing-primary mb-4"
+          >
             Ils nous font confiance
-          </h2>
-          <p className="text-xl text-landing-primary/70">
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="text-xl text-landing-primary/70"
+          >
             Découvrez les retours d'expérience de syndics professionnels
-          </p>
+          </motion.p>
         </div>
 
         {/* Carousel */}

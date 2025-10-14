@@ -29,44 +29,49 @@ export function Hero() {
         className="absolute inset-0 -z-10"
         style={{ y: backgroundY }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-50 via-purple-50 to-landing-light" />
+        {/* Gradient background using Framer colors */}
+        <div className="absolute inset-0 bg-gradient-to-br from-landing-blue-lite via-landing-purple-lite to-landing-pink-lite" />
+
         {/* Decorative blur orbs with floating animations */}
         <motion.div
-          className="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20"
+          className="absolute top-20 -left-20 w-96 h-96 rounded-full mix-blend-normal filter blur-3xl opacity-30"
+          style={{ background: 'radial-gradient(circle, rgb(211, 123, 255) 0%, transparent 70%)' }}
           animate={{
-            y: [0, -15, 0],
-            x: [0, 10, 0],
-            scale: [1, 1.05, 1]
+            y: [0, -20, 0],
+            x: [0, 15, 0],
+            scale: [1, 1.1, 1]
           }}
           transition={{
-            duration: 15,
+            duration: 20,
             repeat: Infinity,
             ease: 'easeInOut'
           }}
         />
         <motion.div
-          className="absolute top-40 right-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20"
+          className="absolute top-40 -right-20 w-96 h-96 rounded-full mix-blend-normal filter blur-3xl opacity-30"
+          style={{ background: 'radial-gradient(circle, rgb(128, 170, 253) 0%, transparent 70%)' }}
           animate={{
-            y: [0, 20, 0],
-            x: [0, -15, 0],
-            scale: [1, 1.08, 1]
+            y: [0, 25, 0],
+            x: [0, -20, 0],
+            scale: [1, 1.15, 1]
           }}
           transition={{
-            duration: 18,
+            duration: 25,
             repeat: Infinity,
             ease: 'easeInOut',
             delay: 1
           }}
         />
         <motion.div
-          className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20"
+          className="absolute bottom-20 left-1/3 w-96 h-96 rounded-full mix-blend-normal filter blur-3xl opacity-25"
+          style={{ background: 'radial-gradient(circle, rgb(252, 172, 132) 0%, transparent 70%)' }}
           animate={{
-            y: [0, -10, 0],
-            x: [0, 15, 0],
-            scale: [1, 1.1, 1]
+            y: [0, -15, 0],
+            x: [0, 20, 0],
+            scale: [1, 1.08, 1]
           }}
           transition={{
-            duration: 20,
+            duration: 22,
             repeat: Infinity,
             ease: 'easeInOut',
             delay: 2
