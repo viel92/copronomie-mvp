@@ -2,7 +2,7 @@ import { Navigation } from '@/components/landing/navigation'
 import { Hero } from '@/components/landing/hero'
 import { Ticker } from '@/components/landing/ticker'
 import { Stats } from '@/components/landing/stats'
-import { Features } from '@/components/landing/features'
+import { FeatureShowcase } from '@/components/landing/feature-showcase'
 import { HowItWorks } from '@/components/landing/how-it-works'
 import { Testimonials } from '@/components/landing/testimonials'
 import { Pricing } from '@/components/landing/pricing'
@@ -19,7 +19,7 @@ export default function HomePage() {
         <Hero />
         <Ticker />
         <Stats />
-        <Features />
+        <FeatureShowcase />
         <HowItWorks />
         <Testimonials />
         <Pricing />
