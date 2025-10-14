@@ -60,18 +60,18 @@ export function CompanySidebar() {
 
   const getNavClasses = (path: string) => {
     return cn(
-      "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-muted",
+      "flex items-center gap-3 px-3 py-2 rounded-medium text-sm font-medium transition-all",
       isActive(path)
-        ? "bg-primary text-primary-foreground hover:bg-primary/90"
-        : "text-muted-foreground hover:text-foreground"
+        ? "bg-landing-primary text-white hover:bg-landing-primary/90 shadow-card"
+        : "text-landing-primary/70 hover:bg-landing-gray-dark hover:text-landing-primary"
     )
   }
 
   return (
-    <div className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 border-r bg-card p-4 overflow-y-auto">
+    <div className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 border-r border-landing-border bg-white p-4 overflow-y-auto">
       {/* Navigation principale */}
       <div className="space-y-2">
-        <h2 className="mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+        <h2 className="mb-2 px-3 text-xs font-semibold text-landing-primary/50 uppercase tracking-wide">
           Navigation
         </h2>
         <nav className="space-y-1">
@@ -90,7 +90,7 @@ export function CompanySidebar() {
 
       {/* Compte */}
       <div className="mt-8 space-y-2">
-        <h2 className="mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+        <h2 className="mb-2 px-3 text-xs font-semibold text-landing-primary/50 uppercase tracking-wide">
           Compte
         </h2>
         <nav className="space-y-1">
@@ -112,7 +112,7 @@ export function CompanySidebar() {
         <nav>
           <Link
             href="/"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-muted text-muted-foreground hover:text-foreground"
+            className="flex items-center gap-3 px-3 py-2 rounded-medium text-sm font-medium transition-all text-landing-primary/70 hover:bg-landing-gray-dark hover:text-landing-primary"
           >
             <Home className="h-4 w-4" />
             <span>Accueil</span>

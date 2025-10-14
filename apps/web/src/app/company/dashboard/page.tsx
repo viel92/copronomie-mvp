@@ -32,8 +32,8 @@ export default function CompanyDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Dashboard Entreprise</h1>
-        <p className="text-muted-foreground mt-1">
+        <h1 className="text-4xl font-bold text-landing-primary">Dashboard Entreprise</h1>
+        <p className="text-landing-primary/60 mt-2">
           Consultez les projets disponibles et gérez vos devis
         </p>
       </div>

@@ -1,17 +1,12 @@
 'use client'
 
 import { trpc } from '@/lib/trpc'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Button,
-  Badge
-} from '@copronomie/ui'
-import { FolderKanban, Building, FileText, Plus, Loader2 } from 'lucide-react'
+import { Button, Badge } from '@copronomie/ui'
+import { FolderKanban, Building, FileText, Plus, Loader2, Bell } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { StatCard } from '@/components/dashboard/StatCard'
+import { DashboardCard, DashboardCardHeader, DashboardCardTitle, DashboardCardContent } from '@/components/dashboard/DashboardCard'
 
 export default function SyndicDashboard() {
   const router = useRouter()
@@ -71,8 +66,8 @@ export default function SyndicDashboard() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Tableau de bord Syndic</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-4xl font-bold text-landing-primary">Tableau de bord Syndic</h1>
+          <p className="text-landing-primary/60 mt-2">
             {selectedCondo ? `Copropriété: ${selectedCondo.name}` : "Vue d'ensemble de toutes les copropriétés"}
           </p>
         </div>
@@ -80,7 +75,7 @@ export default function SyndicDashboard() {
           <select
             value={selectedCondoId}
             onChange={(e) => setSelectedCondoId(e.target.value)}
-            className="px-4 py-2 border rounded-lg"
+            className="px-4 py-2.5 bg-landing-gray-dark border-0 rounded-medium text-landing-primary focus:ring-2 focus:ring-landing-blue transition-all"
           >
             <option value="all">Toutes les copropriétés</option>
             {condos.map(condo => (
@@ -92,6 +87,7 @@ export default function SyndicDashboard() {
           <Button
             variant="hero"
             onClick={() => router.push('/syndic/projects/new')}
+            className="shadow-card hover:shadow-card-hover"
           >
             <Plus className="h-4 w-4 mr-2" />
             Nouveau projet
@@ -100,72 +96,50 @@ export default function SyndicDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <FolderKanban className="h-5 w-5 text-primary" />
-              Projets actifs
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{activeProjects.length}</p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Projets actifs"
+          value={activeProjects.length}
+          icon={FolderKanban}
+          color="blue"
+        />
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Building className="h-5 w-5 text-secondary" />
-              {selectedCondoId === 'all' ? 'Copropriétés' : 'Lots'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">
-              {selectedCondoId === 'all' ? condos.length : (selectedCondo?.units_count || 0)}
-            </p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title={selectedCondoId === 'all' ? 'Copropriétés' : 'Lots'}
+          value={selectedCondoId === 'all' ? condos.length : (selectedCondo?.units_count || 0)}
+          icon={Building}
+          color="purple"
+        />
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <FileText className="h-5 w-5 text-green-600" />
-              Devis reçus
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{analytics?.analytics.totalQuotes || 0}</p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Devis reçus"
+          value={analytics?.analytics.totalQuotes || 0}
+          icon={FileText}
+          color="orange"
+        />
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <FileText className="h-5 w-5 text-orange-600" />
-              Alertes
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{alerts?.count || 0}</p>
-            <p className="text-sm text-muted-foreground">Non lues</p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Alertes"
+          value={alerts?.count || 0}
+          icon={Bell}
+          color="pink"
+          subtitle="Non lues"
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FolderKanban className="h-5 w-5 text-primary" />
+        <DashboardCard className="lg:col-span-2">
+          <DashboardCardHeader>
+            <DashboardCardTitle className="flex items-center gap-2">
+              <FolderKanban className="h-5 w-5 text-landing-blue" />
               Projets récents
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </DashboardCardTitle>
+          </DashboardCardHeader>
+          <DashboardCardContent>
             <div className="space-y-4">
               {recentProjects.length > 0 ? recentProjects.map((project) => (
                 <div
                   key={project.id}
-                  className="flex items-center justify-between p-4 bg-card rounded-lg border border-border cursor-pointer hover:bg-accent transition-colors"
+                  className="flex items-center justify-between p-4 bg-landing-gray-dark rounded-medium cursor-pointer hover:bg-landing-blue-lite transition-all"
                   onClick={() => router.push(`/syndic/projects/${project.id}`)}
                 >
                   <div className="space-y-1">
@@ -185,22 +159,22 @@ export default function SyndicDashboard() {
                   </Badge>
                 </div>
               )) : (
-                <div className="text-center py-8 text-muted-foreground">
+                <div className="text-center py-8 text-landing-primary/60">
                   Aucun projet récent
                 </div>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </DashboardCardContent>
+        </DashboardCard>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-secondary" />
+        <DashboardCard>
+          <DashboardCardHeader>
+            <DashboardCardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-landing-purple" />
               Statistiques
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </DashboardCardTitle>
+          </DashboardCardHeader>
+          <DashboardCardContent>
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-muted-foreground">Projets par statut</p>
@@ -225,8 +199,8 @@ export default function SyndicDashboard() {
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </DashboardCardContent>
+        </DashboardCard>
       </div>
     </div>
   )

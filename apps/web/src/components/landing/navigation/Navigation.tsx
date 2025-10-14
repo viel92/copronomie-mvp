@@ -74,10 +74,10 @@ export function Navigation() {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
             <Button size="sm" variant="outline" asChild>
-              <Link href="/auth">Se connecter</Link>
+              <Link href="/login">Se connecter</Link>
             </Button>
             <Button size="sm" asChild>
-              <Link href="/auth">S'inscrire</Link>
+              <Link href="/register">S'inscrire</Link>
             </Button>
           </div>
 
@@ -116,10 +116,10 @@ export function Navigation() {
               ))}
               <div className="flex flex-col gap-2 pt-2">
                 <Button size="sm" variant="outline" className="w-full" asChild>
-                  <Link href="/auth">Se connecter</Link>
+                  <Link href="/login">Se connecter</Link>
                 </Button>
                 <Button size="sm" className="w-full" asChild>
-                  <Link href="/auth">S'inscrire</Link>
+                  <Link href="/register">S'inscrire</Link>
                 </Button>
               </div>
             </div>
