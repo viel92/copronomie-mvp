@@ -89,7 +89,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className={`${inter.variable} font-inter antialiased`}>
+      <head>
+        <link
+          href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className={`${inter.variable} font-inter antialiased`} style={{ fontFamily: "'General Sans', var(--font-inter), sans-serif" }}>
         <AuthProvider>
           <TRPCProvider>
             {children}
