@@ -49,10 +49,10 @@ export function Navigation() {
           <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-landing-primary rounded-lg flex items-center justify-center text-white font-bold text-xl transition-transform group-hover:scale-105">
+            <div className="w-10 h-10 bg-landing-black rounded-lg flex items-center justify-center text-white font-bold text-xl transition-transform group-hover:scale-105">
               C
             </div>
-            <span className="text-2xl font-heading font-medium text-landing-primary">
+            <span className="text-2xl font-heading font-medium text-landing-black">
               Copronomie
             </span>
           </Link>
@@ -63,7 +63,7 @@ export function Navigation() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-landing-primary/70 hover:text-landing-primary transition-colors font-medium"
+                className="text-landing-black/70 hover:text-landing-black transition-colors font-medium"
               >
                 {link.label}
               </a>
@@ -80,7 +80,7 @@ export function Navigation() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-landing-primary"
+            className="md:hidden p-2 text-landing-black"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (
@@ -105,7 +105,7 @@ export function Navigation() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-landing-primary/70 hover:text-landing-primary transition-colors font-medium py-2"
+                  className="text-landing-black/70 hover:text-landing-black transition-colors font-medium py-2"
                 >
                   {link.label}
                 </a>

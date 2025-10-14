@@ -7,13 +7,13 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  'group relative inline-flex items-center justify-center rounded-lg font-medium overflow-hidden transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center rounded-pill font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        primary: 'bg-landing-black text-white hover:bg-landing-black/90',
-        secondary: 'bg-landing-gray-dark text-landing-black hover:bg-landing-gray',
-        outline: 'border-2 border-landing-black text-landing-black hover:bg-landing-black hover:text-white',
+        primary: 'bg-landing-black text-landing-white hover:bg-landing-black/90 shadow-sm',
+        secondary: 'bg-landing-white text-landing-black border-2 border-landing-black hover:bg-landing-gray-dark',
+        outline: 'border-2 border-landing-black text-landing-black hover:bg-landing-black hover:text-landing-white',
       },
       size: {
         sm: 'px-6 py-3 text-body-14',
@@ -32,31 +32,27 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
-  children: React.ReactNode
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, children, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button'
+    const MotionComp = motion(Comp)
 
     return (
-      <Comp
+      <MotionComp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
+        whileHover={{
+          scale: 1.02,
+          transition: { duration: 0.2, ease: 'easeOut' }
+        }}
+        whileTap={{
+          scale: 0.98,
+          transition: { duration: 0.1 }
+        }}
         {...props}
-      >
-        {/* Dual-text container for vertical slide animation */}
-        <span className="relative flex flex-col h-full items-center justify-center">
-          {/* Primary text - slides up on hover */}
-          <span className="transition-transform duration-300 ease-out group-hover:-translate-y-full">
-            {children}
-          </span>
-          {/* Duplicate text - slides in from below on hover */}
-          <span className="absolute top-0 left-1/2 -translate-x-1/2 translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0">
-            {children}
-          </span>
-        </span>
-      </Comp>
+      />
     )
   }
 )
