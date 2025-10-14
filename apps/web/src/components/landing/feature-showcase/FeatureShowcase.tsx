@@ -2,43 +2,43 @@
 
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Container } from '../ui'
+import { Container, Badge } from '../ui'
 import { Check } from 'lucide-react'
 import Image from 'next/image'
 
 const features = [
   {
-    title: 'Intégration de données simplifiée',
+    title: 'Publiez vos appels d\'offres en 2 minutes',
     description:
-      'Connectez facilement vos outils et plateformes existants pour centraliser toutes vos données de copropriété.',
+      'Fini les emails, appels et relances interminables. Créez un appel d\'offres détaillé en quelques clics et recevez des devis qualifiés en 48h maximum.',
     items: [
-      'Synchronisation en temps réel',
-      'Support multi-plateforme',
-      'Transfert de données sécurisé',
+      'Formulaire guidé et intuitif',
+      'Joignez plans et photos facilement',
+      'Diffusion automatique aux artisans qualifiés',
     ],
     imagePosition: 'left' as const,
     imagePlaceholder: '/images/feature-integration.jpg',
   },
   {
-    title: 'Analysez et optimisez',
+    title: 'Comparez des devis pré-qualifiés',
     description:
-      'Utilisez l\'IA pour découvrir des insights précieux et améliorer les performances de votre copropriété.',
+      'Plus besoin de vérifier les certifications ou de chercher des références. Nous pré-qualifions tous les artisans : assurances, certifications, avis clients vérifiés.',
     items: [
-      'Tableaux de bord analytiques',
-      'Recommandations intelligentes',
-      'Rapports personnalisés',
+      'Artisans vérifiés et assurés',
+      'Comparaison côte à côte facilitée',
+      'Historique de performance transparent',
     ],
     imagePosition: 'right' as const,
     imagePlaceholder: '/images/feature-analytics.jpg',
   },
   {
-    title: 'Collaboration en équipe',
+    title: 'Suivez vos projets en un clin d\'œil',
     description:
-      'Travaillez ensemble efficacement avec des outils de communication et de gestion de projet intégrés.',
+      'Tableau de bord centralisé pour toutes vos copropriétés. Suivez l\'avancement des projets, gérez les deadlines et gardez une trace complète pour les AG.',
     items: [
-      'Messagerie instantanée',
-      'Partage de documents',
-      'Gestion des tâches',
+      'Vue d\'ensemble multi-copropriétés',
+      'Alertes et notifications automatiques',
+      'Export pour AG en un clic',
     ],
     imagePosition: 'left' as const,
     imagePlaceholder: '/images/feature-collaboration.jpg',
@@ -57,28 +57,28 @@ export function FeatureShowcase() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5 }}
-            className="inline-block mb-4 px-4 py-2 bg-landing-purple-lite rounded-pill text-body-14 font-medium text-landing-black uppercase"
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="flex justify-center mb-6"
           >
-            Fonctionnalités
+            <Badge icon="✨">Fonctionnalités</Badge>
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="text-heading-3-mobile md:text-heading-2-tablet lg:text-heading-2 font-medium text-landing-black mb-6"
           >
-            Des fonctionnalités puissantes
+            Simplifiez la gestion de vos appels d'offres
             <br />
-            pour votre croissance
+            de A à Z
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="text-body-18 text-landing-secondary"
           >
-            Explorez notre suite complète de fonctionnalités conçues pour simplifier la gestion de votre copropriété
+            De la publication à l'attribution, gérez tous vos projets de travaux avec une plateforme pensée pour les syndics
           </motion.p>
         </div>
 
@@ -90,8 +90,8 @@ export function FeatureShowcase() {
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
               transition={{
-                duration: 0.7,
-                delay: 0.3 + index * 0.2,
+                duration: 0.6,
+                delay: 0.3 + index * 0.15,
                 ease: [0.22, 1, 0.36, 1],
               }}
               className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center ${
@@ -137,8 +137,9 @@ export function FeatureShowcase() {
                           : { opacity: 0, x: -20 }
                       }
                       transition={{
-                        duration: 0.5,
-                        delay: 0.4 + index * 0.2 + itemIndex * 0.1,
+                        duration: 0.6,
+                        delay: 0.4 + index * 0.15 + itemIndex * 0.1,
+                        ease: [0.22, 1, 0.36, 1],
                       }}
                       className="flex items-start gap-3"
                     >

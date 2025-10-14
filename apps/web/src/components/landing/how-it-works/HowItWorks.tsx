@@ -2,7 +2,7 @@
 
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Container } from '../ui'
+import { Container, Badge } from '../ui'
 import { FileText, Search, CheckCircle } from 'lucide-react'
 
 const steps = [
@@ -41,10 +41,10 @@ export function HowItWorks() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5 }}
-            className="inline-block mb-4 px-4 py-2 bg-landing-blue-lite rounded-pill text-body-14 font-medium text-landing-black uppercase"
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="flex justify-center mb-6"
           >
-            Comment ça marche
+            <Badge icon="🚀">Comment ça marche</Badge>
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}

@@ -1,13 +1,26 @@
 'use client'
 
 import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, useAnimationFrame } from 'framer-motion'
 import Link from 'next/link'
+import { Sparkles } from 'lucide-react'
 import { Button, Badge, Container } from '../ui'
 import { HeroTitle } from './HeroTitle'
 
+const tickerItems = [
+  'Gain de temps massif',
+  'Artisans pré-qualifiés',
+  'Comparaison facilitée',
+  'Suivi centralisé',
+  '100% gratuit syndics',
+  'Conformité ALUR',
+]
+
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
+  const tickerRef = useRef<HTMLDivElement>(null)
+  const xRef = useRef(0)
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end start']
@@ -18,11 +31,27 @@ export function Hero() {
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
   const contentScale = useTransform(scrollYProgress, [0, 0.7], [1, 0.98])
 
+  // Ticker animation
+  useAnimationFrame((time, delta) => {
+    if (!tickerRef.current) return
+
+    const speed = 70
+    xRef.current -= (delta / 1000) * speed
+
+    const itemWidth = tickerRef.current.scrollWidth / 2
+
+    if (Math.abs(xRef.current) >= itemWidth) {
+      xRef.current = 0
+    }
+
+    tickerRef.current.style.transform = `translateX(${xRef.current}px)`
+  })
+
   return (
     <section
       ref={sectionRef}
       id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20"
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-visible pt-32 pb-0"
     >
       {/* Background with gradient and parallax */}
       <motion.div
@@ -88,15 +117,15 @@ export function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="flex justify-center"
           >
-            <Badge icon="⚡">Syndics & Copropriétaires</Badge>
+            <Badge icon="⚡">100% Gratuit pour les Syndics</Badge>
           </motion.div>
 
           {/* Animated Title - Exactly like Framer template */}
           <HeroTitle
-            text="La plateforme qui réinvente la gestion des devis en copropriété"
+            text="Trouvez les meilleurs artisans pour vos copropriétés en quelques clics"
             className="text-5xl md:text-6xl lg:text-7xl font-bold text-landing-primary leading-tight"
           />
 
@@ -104,33 +133,59 @@ export function Hero() {
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
+            transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="text-xl md:text-2xl text-landing-primary/80 max-w-3xl mx-auto"
           >
-            Publiez vos projets, recevez des devis qualifiés et trouvez les
-            meilleurs artisans pour votre copropriété. Sans effort.
+            Publiez vos appels d'offres, comparez les devis qualifiés et gagnez du temps. Fini les relances interminables et les dossiers perdus.
           </motion.p>
 
-          {/* CTAs */}
+          {/* Waitlist Form - Premium Framer Style */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            transition={{ delay: 0.4, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full max-w-xl mx-auto"
           >
-            <Button size="lg" asChild>
-              <Link href="/register">Commencer gratuitement →</Link>
-            </Button>
-            <Button size="lg" variant="secondary" asChild>
-              <a href="#features">Découvrir</a>
-            </Button>
+            <div className="relative">
+              {/* Glassmorphic Container */}
+              <div className="relative p-1.5 rounded-[20px] bg-gradient-to-br from-white/40 via-white/30 to-white/20 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.12)] border border-white/30">
+                <div className="relative bg-white/60 backdrop-blur-md rounded-[16px] p-2">
+                  <form className="flex flex-col sm:flex-row gap-2">
+                    <div className="relative flex-1 group">
+                      <input
+                        type="email"
+                        placeholder="Entrez votre email"
+                        className="w-full h-14 px-6 bg-white/80 backdrop-blur-sm rounded-xl border-2 border-transparent outline-none text-landing-primary placeholder:text-landing-primary/40 text-base font-medium transition-all duration-300 focus:border-landing-purple/30 focus:bg-white focus:shadow-[0_0_0_4px_rgba(211,123,255,0.1)]"
+                        required
+                      />
+                    </div>
+                    <Button type="submit" size="lg" className="whitespace-nowrap">
+                      Rejoindre
+                    </Button>
+                  </form>
+                </div>
+              </div>
+
+              {/* Subtle glow effect */}
+              <div className="absolute inset-0 -z-10 bg-gradient-to-r from-landing-purple/20 via-landing-pink/20 to-landing-blue/20 blur-3xl opacity-50 rounded-[20px]" />
+            </div>
+
+            {/* Small text below */}
+            <p className="text-center text-sm text-landing-primary/60 mt-4">
+              <span className="inline-flex items-center gap-1.5">
+                <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 1L10.163 5.38071L15 6.13115L11.5 9.54427L12.326 14.3688L8 12.0807L3.674 14.3688L4.5 9.54427L1 6.13115L5.837 5.38071L8 1Z" fill="currentColor" className="text-landing-purple"/>
+                </svg>
+                Rejoignez <strong className="font-semibold">+500</strong> syndics sur la liste d'attente
+              </span>
+            </p>
           </motion.div>
 
           {/* Trust Badges */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
+            transition={{ delay: 0.6, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="flex flex-wrap items-center justify-center gap-6 text-sm text-landing-primary/70"
           >
             <span className="flex items-center gap-2">
@@ -145,7 +200,7 @@ export function Hero() {
                   clipRule="evenodd"
                 />
               </svg>
-              Gratuit pendant 30 jours
+              100% gratuit pour les syndics
             </span>
             <span className="flex items-center gap-2">
               <svg
@@ -159,7 +214,7 @@ export function Hero() {
                   clipRule="evenodd"
                 />
               </svg>
-              Sans carte bancaire
+              Sans engagement
             </span>
             <span className="flex items-center gap-2">
               <svg
@@ -173,11 +228,59 @@ export function Hero() {
                   clipRule="evenodd"
                 />
               </svg>
-              Configuration en 5 minutes
+              Accès immédiat dès le lancement
             </span>
           </motion.div>
         </motion.div>
       </Container>
+
+      {/* Ticker Section integrated in Hero - Full width */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.8, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="relative w-full mt-16 md:mt-20 pb-12 md:pb-16"
+      >
+        <div className="relative h-[80px] md:h-[100px] flex items-center overflow-hidden">
+          <div
+            ref={tickerRef}
+            className="flex items-center gap-12 md:gap-16 whitespace-nowrap"
+            style={{ willChange: 'transform' }}
+          >
+            {/* Premier groupe */}
+            {tickerItems.map((item, index) => (
+              <div
+                key={`first-${index}`}
+                className="flex items-center gap-3 md:gap-4"
+              >
+                <span className="text-lg md:text-2xl lg:text-3xl font-medium text-landing-primary">
+                  {item}
+                </span>
+                <Sparkles
+                  className="w-6 h-6 md:w-8 md:h-8 text-landing-purple flex-shrink-0"
+                  strokeWidth={1.5}
+                />
+              </div>
+            ))}
+
+            {/* Deuxième groupe (duplication pour boucle infinie) */}
+            {tickerItems.map((item, index) => (
+              <div
+                key={`second-${index}`}
+                className="flex items-center gap-3 md:gap-4"
+              >
+                <span className="text-lg md:text-2xl lg:text-3xl font-medium text-landing-primary">
+                  {item}
+                </span>
+                <Sparkles
+                  className="w-6 h-6 md:w-8 md:h-8 text-landing-purple flex-shrink-0"
+                  strokeWidth={1.5}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
     </section>
   )
 }

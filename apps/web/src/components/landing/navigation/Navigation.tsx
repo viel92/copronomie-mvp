@@ -17,43 +17,22 @@ const navLinks = [
 export function Navigation() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [isVisible, setIsVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
-
-      // Déterminer si on a scrollé
       setScrolled(currentScrollY > 20)
-
-      // Navbar hide/show logic
-      if (currentScrollY < 100) {
-        // Toujours visible en haut de page
-        setIsVisible(true)
-      } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scroll down - hide navbar
-        setIsVisible(false)
-      } else if (currentScrollY < lastScrollY) {
-        // Scroll up - show navbar
-        setIsVisible(true)
-      }
-
-      setLastScrollY(currentScrollY)
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
+  }, [])
 
   return (
     <motion.nav
       initial={{ y: -100, opacity: 0 }}
-      animate={{
-        y: isVisible ? 0 : -100,
-        opacity: isVisible ? 1 : 0
-      }}
-      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-shadow duration-300',
         scrolled && 'shadow-sm'
@@ -93,9 +72,12 @@ export function Navigation() {
           </div>
 
           {/* Desktop CTA */}
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center gap-3">
+            <Button size="sm" variant="outline" asChild>
+              <Link href="/auth">Se connecter</Link>
+            </Button>
             <Button size="sm" asChild>
-              <Link href="/contact">Contact</Link>
+              <Link href="/auth">S'inscrire</Link>
             </Button>
           </div>
 
@@ -132,9 +114,14 @@ export function Navigation() {
                   {link.label}
                 </a>
               ))}
-              <Button size="sm" className="w-full" asChild>
-                <Link href="/contact">Contact</Link>
-              </Button>
+              <div className="flex flex-col gap-2 pt-2">
+                <Button size="sm" variant="outline" className="w-full" asChild>
+                  <Link href="/auth">Se connecter</Link>
+                </Button>
+                <Button size="sm" className="w-full" asChild>
+                  <Link href="/auth">S'inscrire</Link>
+                </Button>
+              </div>
             </div>
           </motion.div>
         )}

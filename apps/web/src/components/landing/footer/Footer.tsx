@@ -16,10 +16,10 @@ const footerLinks = {
     { label: 'Contact', href: '/contact' }
   ],
   legal: [
-    { label: 'Mentions légales', href: '/legal' },
-    { label: 'Politique de confidentialité', href: '/privacy' },
-    { label: 'CGU', href: '/terms' },
-    { label: 'CGV', href: '/sales-terms' }
+    { label: 'Mentions légales', href: '/mentions-legales' },
+    { label: 'Politique de confidentialité', href: '/privacy-policy' },
+    { label: 'CGU', href: '/cgu' },
+    { label: 'CGV', href: '/cgv' }
   ],
   resources: [
     { label: 'Documentation', href: '/docs' },

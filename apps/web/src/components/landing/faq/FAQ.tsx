@@ -2,41 +2,41 @@
 
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Container } from '../ui'
+import { Container, Badge } from '../ui'
 import { FAQItem } from './FAQItem'
 
 const faqs = [
   {
-    question: 'Comment fonctionne Copronomie ?',
-    answer: 'Copronomie est une plateforme qui met en relation les syndics de copropriété avec des artisans qualifiés. Vous publiez votre projet en quelques clics, recevez des devis de professionnels vérifiés, et choisissez la meilleure offre pour votre copropriété.'
+    question: 'C\'est vraiment gratuit pour les syndics ? Où est l\'arnaque ?',
+    answer: 'Oui, c\'est 100% gratuit pour les syndics, sans frais cachés, sans engagement, sans carte bancaire. Notre modèle économique est simple : les artisans paient un abonnement pour accéder aux appels d\'offres. Vous ne payez jamais rien, ni commission, ni frais de dossier.'
+  },
+  {
+    question: 'Comment être sûr que les artisans sont fiables ?',
+    answer: 'Nous vérifions systématiquement : SIRET valide, assurance RC décennale à jour, certifications professionnelles (RGE, Qualibat, etc.). Chaque artisan a aussi un historique d\'avis de syndics qui ont travaillé avec lui. Seuls les professionnels sérieux sont acceptés.'
   },
   {
     question: 'Combien de temps faut-il pour recevoir des devis ?',
-    answer: 'En moyenne, vous recevrez vos premiers devis sous 48h. Les artisans ont 7 jours pour soumettre leur proposition. Vous êtes notifié en temps réel dès qu\'un nouveau devis arrive.'
+    answer: 'En moyenne 48h pour les premiers devis. Vous pouvez recevoir entre 3 et 10 devis selon votre projet. Fini l\'attente interminable ou les artisans qui ne rappellent jamais : ils sont notifiés automatiquement et motivés à répondre rapidement.'
   },
   {
-    question: 'Les artisans sont-ils vérifiés ?',
-    answer: 'Oui, absolument. Tous les artisans de notre plateforme sont vérifiés : nous contrôlons leur SIRET, leurs assurances professionnelles et leurs certifications. Seuls les professionnels qualifiés peuvent soumettre des devis.'
+    question: 'Que se passe-t-il si je ne suis pas satisfait d\'un devis ?',
+    answer: 'Aucune obligation de choisir un devis. Vous comparez en toute liberté, vous pouvez demander des précisions aux artisans via la messagerie, ou simplement refuser tous les devis si aucun ne convient. Vous restez 100% maître de vos décisions.'
   },
   {
-    question: 'Puis-je annuler mon abonnement à tout moment ?',
-    answer: 'Oui, votre abonnement est sans engagement. Vous pouvez l\'annuler à tout moment depuis votre espace personnel. En cas d\'annulation, vous gardez l\'accès jusqu\'à la fin de la période payée.'
+    question: 'Est-ce que je peux gérer plusieurs copropriétés ?',
+    answer: 'Oui, absolument. Vous pouvez gérer autant de copropriétés que vous voulez, publier des appels d\'offres illimités, et tout suivre depuis un seul tableau de bord. C\'est particulièrement utile pour les syndics professionnels qui gèrent plusieurs immeubles.'
   },
   {
-    question: 'Y a-t-il une commission sur les devis ?',
-    answer: 'Non, nous ne prenons aucune commission sur les devis ou les travaux réalisés. Notre modèle est basé uniquement sur l\'abonnement mensuel. Les prix que vous voyez sont les vrais prix des artisans.'
+    question: 'Comment présenter ça en assemblée générale ?',
+    answer: 'La plateforme génère automatiquement des exports PDF avec tous les devis comparés côte à côte, l\'historique des échanges, et les certifications des artisans. Tout est transparent et facilement présentable en AG. La conformité ALUR est assurée.'
   },
   {
-    question: 'Puis-je inviter d\'autres utilisateurs de ma structure ?',
-    answer: 'Oui, avec le plan Entreprise, vous pouvez créer plusieurs comptes utilisateurs pour vos collaborateurs. Chaque utilisateur aura accès aux projets de votre structure avec des permissions personnalisables.'
+    question: 'Que se passe-t-il après avoir choisi un artisan ?',
+    answer: 'Une fois l\'artisan choisi, vous gérez directement avec lui comme d\'habitude. Copronomie facilite juste la mise en relation et la comparaison. Vous gardez votre liberté totale sur le suivi de chantier et les modalités de paiement.'
   },
   {
-    question: 'Proposez-vous une période d\'essai ?',
-    answer: 'Oui, tous nos plans incluent 14 jours d\'essai gratuit. Aucune carte bancaire n\'est requise pour commencer. Testez toutes les fonctionnalités sans engagement.'
-  },
-  {
-    question: 'Comment contacter le support ?',
-    answer: 'Notre équipe support est disponible par email (support@copronomie.fr) et chat en ligne. Le plan Professionnel bénéficie d\'un support prioritaire 7j/7, et le plan Entreprise d\'un account manager dédié.'
+    question: 'Ça marche pour quels types de travaux ?',
+    answer: 'Tous types de travaux : ravalement, toiture, plomberie, électricité, ascenseurs, chauffage collectif, espaces verts, nettoyage, etc. De la petite réparation urgente aux gros chantiers de rénovation. Si vous avez besoin d\'un artisan, on a ce qu\'il vous faut.'
   }
 ]
 
@@ -51,10 +51,18 @@ export function FAQ() {
       <Container>
         {/* Header */}
         <div ref={headerRef} className="text-center mb-16 max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="flex justify-center mb-6"
+          >
+            <Badge icon="❓">FAQ</Badge>
+          </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="text-4xl md:text-5xl font-bold text-landing-primary mb-4"
           >
             Questions fréquentes
@@ -62,10 +70,10 @@ export function FAQ() {
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="text-xl text-landing-primary/70"
           >
-            Tout ce que vous devez savoir sur Copronomie
+            Les réponses aux questions que se posent les syndics
           </motion.p>
         </div>
 

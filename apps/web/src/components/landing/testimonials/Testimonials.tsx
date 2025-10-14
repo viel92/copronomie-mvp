@@ -4,33 +4,33 @@ import { useCallback, useEffect, useState, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import useEmblaCarousel from 'embla-carousel-react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Container } from '../ui'
+import { Container, Badge } from '../ui'
 import { TestimonialCard } from './TestimonialCard'
 
 const testimonials = [
   {
-    quote: "Copronomie a complètement transformé notre façon de gérer les travaux. Nous recevons des devis qualifiés en 48h au lieu de 2 semaines.",
+    quote: "Avant, je passais des heures à contacter des artisans et à relancer pour avoir 3 devis. Avec Copronomie, j'ai 5 devis qualifiés en moins de 48h. C'est un gain de temps considérable.",
     author: "Marie Dubois",
-    role: "Syndic de copropriété",
-    company: "Immo Syndic Paris"
+    role: "Syndic professionnelle",
+    company: "12 copropriétés • Paris 15ème"
   },
   {
-    quote: "La transparence sur les prix et la qualité des artisans nous ont fait économiser 15% sur notre dernier chantier de rénovation.",
+    quote: "Le gros plus, c'est la vérification des assurances et certifications. Je ne perds plus de temps à vérifier moi-même. Et c'est 100% gratuit pour nous, difficile de faire mieux.",
     author: "Jean Martin",
-    role: "Gestionnaire",
-    company: "Foncia Lyon"
+    role: "Gestionnaire de copropriété",
+    company: "8 copropriétés • Lyon"
   },
   {
-    quote: "Interface intuitive et support réactif. Je recommande vivement à tous les syndics qui veulent gagner du temps.",
-    author: "Sophie Bernard",
+    quote: "J'ai utilisé Copronomie pour une réfection de toiture. Les artisans étaient sérieux, réactifs, et les devis parfaitement détaillés pour présentation en AG.",
+    author: "Sophie Leclerc",
+    role: "Syndic bénévole",
+    company: "45 lots • Marseille"
+  },
+  {
+    quote: "Plus besoin de justifier ma sélection d'artisans en AG. Tout est transparent : avis, certifications, historique. Les copropriétaires ont confiance.",
+    author: "Thomas Bernard",
     role: "Syndic professionnel",
-    company: "Century 21 Marseille"
-  },
-  {
-    quote: "Nous avons publié 12 projets en 3 mois. Le suivi en temps réel nous permet de tenir informés tous les copropriétaires facilement.",
-    author: "Thomas Petit",
-    role: "Administrateur de biens",
-    company: "Nexity Toulouse"
+    company: "25 copropriétés • Toulouse"
   }
 ]
 
@@ -72,26 +72,34 @@ export function Testimonials() {
       <Container>
         {/* Header */}
         <div ref={headerRef} className="text-center mb-16 max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="flex justify-center mb-6"
+          >
+            <Badge icon="💬">Témoignages</Badge>
+          </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="text-4xl md:text-5xl font-bold text-landing-primary mb-4"
           >
-            Ils nous font confiance
+            Des syndics qui gagnent du temps
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="text-xl text-landing-primary/70"
           >
-            Découvrez les retours d'expérience de syndics professionnels
+            Professionnels et bénévoles, ils ont simplifié la gestion de leurs appels d'offres
           </motion.p>
         </div>
 
         {/* Carousel */}
-        <div className="relative">
+        <div className="relative px-12 md:px-16">
           <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex gap-6">
               {testimonials.map((testimonial, index) => (
@@ -109,7 +117,7 @@ export function Testimonials() {
           <button
             onClick={scrollPrev}
             disabled={!canScrollPrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-landing-primary hover:text-white transition-all duration-300"
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-landing-primary hover:text-white transition-all duration-300"
             aria-label="Previous testimonial"
           >
             <ChevronLeft className="w-6 h-6" />
@@ -118,7 +126,7 @@ export function Testimonials() {
           <button
             onClick={scrollNext}
             disabled={!canScrollNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-landing-primary hover:text-white transition-all duration-300"
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-landing-primary hover:text-white transition-all duration-300"
             aria-label="Next testimonial"
           >
             <ChevronRight className="w-6 h-6" />

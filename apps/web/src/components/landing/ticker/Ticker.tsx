@@ -37,25 +37,25 @@ export function Ticker() {
   })
 
   return (
-    <section className="py-16 md:py-24 bg-landing-gray overflow-hidden">
+    <section className="relative pt-8 pb-12 md:pb-16 overflow-hidden">
       <Container>
-        <div className="relative h-[120px] md:h-[200px] flex items-center">
+        <div className="relative h-[80px] md:h-[100px] flex items-center">
           <div
             ref={tickerRef}
-            className="flex items-center gap-16 md:gap-24 whitespace-nowrap"
+            className="flex items-center gap-12 md:gap-16 whitespace-nowrap"
             style={{ willChange: 'transform' }}
           >
             {/* Premier groupe */}
             {tickerItems.map((item, index) => (
               <div
                 key={`first-${index}`}
-                className="flex items-center gap-4 md:gap-6"
+                className="flex items-center gap-3 md:gap-4"
               >
-                <span className="text-xl md:text-3xl lg:text-4xl font-medium text-landing-black">
+                <span className="text-lg md:text-2xl lg:text-3xl font-medium text-landing-primary">
                   {item}
                 </span>
                 <Sparkles
-                  className="w-8 h-8 md:w-12 md:h-12 text-landing-blue flex-shrink-0"
+                  className="w-6 h-6 md:w-8 md:h-8 text-landing-purple flex-shrink-0"
                   strokeWidth={1.5}
                 />
               </div>
@@ -65,13 +65,13 @@ export function Ticker() {
             {tickerItems.map((item, index) => (
               <div
                 key={`second-${index}`}
-                className="flex items-center gap-4 md:gap-6"
+                className="flex items-center gap-3 md:gap-4"
               >
-                <span className="text-xl md:text-3xl lg:text-4xl font-medium text-landing-black">
+                <span className="text-lg md:text-2xl lg:text-3xl font-medium text-landing-primary">
                   {item}
                 </span>
                 <Sparkles
-                  className="w-8 h-8 md:w-12 md:h-12 text-landing-blue flex-shrink-0"
+                  className="w-6 h-6 md:w-8 md:h-8 text-landing-purple flex-shrink-0"
                   strokeWidth={1.5}
                 />
               </div>

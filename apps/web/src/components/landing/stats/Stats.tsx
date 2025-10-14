@@ -9,22 +9,21 @@ import { Building2, TrendingUp, Star } from 'lucide-react'
 const stats = [
   {
     icon: Building2,
-    value: 150,
-    suffix: '+',
-    label: 'Syndics actifs',
+    value: 75,
+    suffix: '%',
+    label: 'de temps gagné sur la gestion des appels d\'offres',
   },
   {
     icon: TrendingUp,
-    value: 2300,
-    suffix: '+',
-    label: 'Projets publiés',
-    separator: ',',
+    value: 48,
+    suffix: 'h',
+    label: 'délai moyen de réponse des artisans qualifiés',
   },
   {
     icon: Star,
-    value: 98,
+    value: 100,
     suffix: '%',
-    label: 'Taux de satisfaction',
+    label: 'gratuit pour les syndics, sans engagement',
   },
 ]
 
@@ -33,7 +32,7 @@ export function Stats() {
   const isInView = useInView(ref, { once: true, margin: '-100px' })
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-section-md md:py-section-lg bg-white">
       <Container>
         <div ref={ref} className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {stats.map((stat, index) => (
