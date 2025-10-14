@@ -42,8 +42,8 @@ export function Navigation() {
           className={cn(
             'backdrop-blur-lg border rounded-2xl transition-all duration-300 px-6 py-4',
             scrolled
-              ? 'bg-white/90 border-gray-100 shadow-card'
-              : 'bg-white/60 border-landing-overlay-strong'
+              ? 'bg-white/70 border-white/20 shadow-card'
+              : 'bg-white/40 border-white/30'
           )}
         >
           <div className="flex items-center justify-between">

@@ -11,9 +11,9 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-landing-black text-landing-white hover:bg-landing-black/90 shadow-sm',
-        secondary: 'bg-landing-white text-landing-black border-2 border-landing-black hover:bg-landing-gray-dark',
-        outline: 'border-2 border-landing-black text-landing-black hover:bg-landing-black hover:text-landing-white',
+        primary: 'bg-landing-black !text-white hover:bg-landing-black/90 shadow-sm',
+        secondary: 'bg-white !text-landing-black border-2 border-landing-black hover:bg-landing-gray-dark',
+        outline: 'border-2 border-landing-black !text-landing-black hover:bg-landing-black hover:!text-white',
       },
       size: {
         sm: 'px-6 py-3 text-body-14',
