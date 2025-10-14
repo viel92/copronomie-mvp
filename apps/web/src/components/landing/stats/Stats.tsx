@@ -2,23 +2,28 @@
 
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
+import CountUp from 'react-countup'
 import { Container } from '../ui'
 import { Building2, TrendingUp, Star } from 'lucide-react'
 
 const stats = [
   {
     icon: Building2,
-    value: '150+',
+    value: 150,
+    suffix: '+',
     label: 'Syndics actifs',
   },
   {
     icon: TrendingUp,
-    value: '2,300+',
+    value: 2300,
+    suffix: '+',
     label: 'Projets publiés',
+    separator: ',',
   },
   {
     icon: Star,
-    value: '98%',
+    value: 98,
+    suffix: '%',
     label: 'Taux de satisfaction',
   },
 ]
@@ -50,9 +55,20 @@ export function Stats() {
                 </div>
               </div>
 
-              {/* Value */}
-              <div className="text-4xl md:text-5xl font-bold text-landing-primary mb-2">
-                {stat.value}
+              {/* Value with Counter Animation */}
+              <div className="text-4xl md:text-5xl font-bold text-landing-black mb-2">
+                {isInView ? (
+                  <CountUp
+                    end={stat.value}
+                    duration={2.5}
+                    separator={stat.separator || ''}
+                    suffix={stat.suffix || ''}
+                    useEasing={true}
+                    enableScrollSpy={false}
+                  />
+                ) : (
+                  '0'
+                )}
               </div>
 
               {/* Label */}

@@ -80,12 +80,17 @@ export function HowItWorks() {
               }}
               className="flex flex-col items-start"
             >
-              {/* Icon */}
-              <div className="mb-6 w-16 h-16 md:w-20 md:h-20 rounded-medium bg-landing-blue-lite flex items-center justify-center">
-                <step.icon
-                  className={`w-8 h-8 md:w-10 md:h-10 ${step.iconColor}`}
-                  strokeWidth={1.5}
-                />
+              {/* Image Placeholder */}
+              <div className="mb-6 w-full aspect-[1.37] rounded-medium overflow-hidden bg-gradient-to-br from-landing-blue-lite via-landing-purple-lite to-landing-pink-lite flex items-center justify-center relative">
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                  <step.icon
+                    className={`w-12 h-12 md:w-16 md:h-16 ${step.iconColor}`}
+                    strokeWidth={1.5}
+                  />
+                  <span className="text-landing-secondary text-sm">
+                    Image à venir
+                  </span>
+                </div>
               </div>
 
               {/* Number Badge */}
