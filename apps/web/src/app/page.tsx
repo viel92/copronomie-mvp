@@ -7,6 +7,7 @@ import { HowItWorks } from '@/components/landing/how-it-works'
 import { Testimonials } from '@/components/landing/testimonials'
 import { Pricing } from '@/components/landing/pricing'
 import { FAQ } from '@/components/landing/faq'
+import { FooterCTA } from '@/components/landing/footer-cta'
 import { Footer } from '@/components/landing/footer'
 import { JsonLd } from '@/components/landing/structured-data'
 
@@ -24,6 +25,7 @@ export default function HomePage() {
         <Testimonials />
         <Pricing />
         <FAQ />
+        <FooterCTA />
       </main>
       <Footer />
     </>
