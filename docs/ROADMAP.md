@@ -861,8 +861,175 @@ Transformer le MVP beta en produit production-ready basé sur feedback utilisate
 
 ---
 
-**Dernière mise à jour:** 13 Octobre 2025
+**Dernière mise à jour:** 15 Octobre 2025
 **Prochaine révision:** Après déploiement production
+
+---
+
+## MISE À JOUR 15 OCTOBRE 2025 - UNIFICATION DESIGN SYSTEM & OPTIMISATIONS ✅
+
+### Design System Unifié - Direction Artistique Landing
+**Objectif:** Appliquer la direction artistique moderne de la landing page (Framer template) à travers toute l'application
+
+#### Travaux Réalisés ✅
+
+**1. Pages d'Authentification Séparées**
+- ✅ Création `/login/page.tsx` - Page connexion dédiée
+- ✅ Création `/register/page.tsx` - Page inscription avec sélection rôle
+- ✅ Design glassmorphique matching landing page (backdrop-blur, rounded-medium)
+- ✅ Inputs avec design tokens landing (bg-landing-gray-dark, focus:ring-landing-blue)
+- ✅ Badges colorés avec couleurs landing (blue-lite, purple-lite)
+- ✅ Animations Framer Motion (duration: 0.6, ease: [0.22, 1, 0.36, 1])
+- ✅ Navigation mise à jour: `/auth` → `/login` et `/register` (boutons séparés)
+
+**2. Dashboards avec Statistiques Colorées**
+- ✅ Création `StatCard.tsx` - Cards statistiques avec couleurs vives
+  - 5 variantes: blue, purple, orange, pink, primary
+  - Badges colorés background (landing-blue-lite, landing-purple-lite, etc.)
+  - Icons colorés matching badges (text-landing-blue, text-landing-purple, etc.)
+  - Hover effects avec shadow-card-hover
+- ✅ Création `DashboardCard.tsx` - Cards génériques matching landing
+  - Border landing-border
+  - Shadow system (shadow-card)
+  - Rounded-card radius
+- ✅ Syndic Dashboard redesigné:
+  - 4 stat cards colorées (Projets actifs: blue, Copropriétés: purple, Devis: orange, Alertes: pink)
+  - Select copropriété avec landing colors
+  - Typography avec text-landing-primary
+  - Hover states avec transition-all
+- ✅ Company Dashboard redesigné:
+  - Typography landing-primary
+  - Cards avec landing design tokens
+
+**3. Layouts Application**
+- ✅ DashboardLayout.tsx - Header avec logo Copronomie
+  - Logo badge noir avec lettre C blanche
+  - Background blanc avec backdrop-blur
+  - Border landing-border
+  - Shadow-card
+- ✅ SyndicSidebar.tsx - Navigation avec couleurs landing
+  - Active state: bg-landing-primary avec shadow-card
+  - Hover: bg-landing-gray-dark
+  - Text opacity variants (text-landing-primary/70)
+  - Rounded-medium buttons
+- ✅ CompanySidebar.tsx - Même styling que SyndicSidebar
+- ✅ UserMenu.tsx - Redirection logout vers `/` au lieu de `/auth`
+
+**4. Navigation & Sections Landing Page**
+- ✅ Ajout IDs sections pour navigation par ancres:
+  - `#features` (FeatureShowcase)
+  - `#pricing` (Pricing)
+  - `#testimonials` (Testimonials)
+  - `#faq` (FAQ)
+- ✅ Suppression emojis dans tous les badges:
+  - FeatureShowcase, HowItWorks, Pricing, Testimonials, FAQ, Hero
+  - Respect guideline "pas d'emoji dans le code"
+
+**5. Optimisations Mobile Hero**
+- ✅ Détection mobile avec useState + useEffect (window.innerWidth < 768)
+- ✅ Désactivation animations lourdes sur mobile:
+  - Orbes décoratives avec blur-3xl (3 motion.div)
+  - Parallax background (backgroundY)
+  - Fade out et scale au scroll (contentOpacity, contentScale)
+- ✅ Animations d'entrée simplifiées mobile:
+  - Déplacements réduits (y: 10 au lieu de 20)
+  - Durées réduites (0.4s au lieu de 0.6s)
+  - Délais réduits (0.1s, 0.2s, 0.3s au lieu de 0.2s, 0.4s, 0.6s)
+- ✅ Ticker animation conservée (performant avec useAnimationFrame)
+
+#### Fichiers Modifiés
+```
+apps/web/src/
+├── app/
+│   ├── login/page.tsx (NEW)
+│   ├── register/page.tsx (NEW)
+│   ├── syndic/dashboard/page.tsx (UPDATED - stat cards)
+│   └── company/dashboard/page.tsx (UPDATED - typography)
+├── components/
+│   ├── dashboard/
+│   │   ├── StatCard.tsx (NEW)
+│   │   └── DashboardCard.tsx (NEW)
+│   ├── layout/
+│   │   ├── DashboardLayout.tsx (UPDATED - logo)
+│   │   ├── SyndicSidebar.tsx (UPDATED - colors)
+│   │   ├── CompanySidebar.tsx (UPDATED - colors)
+│   │   └── UserMenu.tsx (UPDATED - logout redirect)
+│   └── landing/
+│       ├── navigation/Navigation.tsx (UPDATED - links)
+│       ├── hero/Hero.tsx (UPDATED - mobile optimizations)
+│       ├── feature-showcase/FeatureShowcase.tsx (UPDATED - id + badge)
+│       ├── how-it-works/HowItWorks.tsx (UPDATED - badge)
+│       ├── pricing/Pricing.tsx (UPDATED - badge)
+│       ├── testimonials/Testimonials.tsx (UPDATED - badge)
+│       └── faq/FAQ.tsx (UPDATED - badge)
+```
+
+#### Design Tokens Utilisés
+**Couleurs Landing:**
+```typescript
+landing: {
+  black: 'rgb(27, 12, 37)',
+  white: 'rgb(255, 255, 255)',
+  primary: 'rgb(27, 12, 37)',
+  'blue-lite': 'rgb(223, 233, 253)',
+  'purple-lite': 'rgb(234, 226, 242)',
+  'orange-lite': 'rgb(247, 230, 221)',
+  'pink-lite': 'rgb(245, 228, 239)',
+  blue: 'rgb(128, 170, 253)',
+  purple: 'rgb(211, 123, 255)',
+  orange: 'rgb(252, 172, 132)',
+  pink: 'rgb(255, 130, 225)',
+  border: 'rgb(226, 232, 240)',
+  'gray-dark': 'rgb(241, 245, 249)',
+}
+```
+
+**Shadows:**
+```typescript
+shadow: {
+  card: '0 1px 3px 0 rgb(0 0 0 / 0.1)',
+  'card-hover': '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+  'card-lift': '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+}
+```
+
+**Border Radius:**
+```typescript
+borderRadius: {
+  card: '16px',
+  medium: '12px',
+  pill: '99px',
+}
+```
+
+#### Métriques de Performance Mobile
+**Avant optimisations:**
+- Animations lourdes causaient lag scroll
+- Blur-3xl + animations multiples = FPS drops
+- Parallax scroll peu fluide
+
+**Après optimisations:**
+- Animations désactivées sur mobile (< 768px)
+- Gradient simple statique
+- Scroll fluide sans lag
+- Animations d'entrée rapides (0.4s)
+
+#### Cohérence Visuelle Atteinte
+**Landing → Auth → Dashboards:**
+- ✅ Palette couleurs unifiée (landing design tokens)
+- ✅ Typographie cohérente (text-landing-primary variants)
+- ✅ Borders cohérentes (landing-border partout)
+- ✅ Shadows cohérentes (shadow-card system)
+- ✅ Border radius cohérent (rounded-card, rounded-medium)
+- ✅ Animations cohérentes (Framer Motion, mêmes easings)
+- ✅ Spacing cohérent (Tailwind scale respectée)
+
+### Prochaines Actions - Design & UX
+1. [ ] Tests responsive complets (320px, 768px, 1024px)
+2. [ ] Tests cross-browser (Chrome, Firefox, Safari)
+3. [ ] Lighthouse audit mobile (objectif >90)
+4. [ ] Tests accessibilité (keyboard navigation, screen readers)
+5. [ ] Dark mode (optionnel, post-MVP)
 
 ---
 

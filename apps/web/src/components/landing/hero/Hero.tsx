@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { motion, useScroll, useTransform, useAnimationFrame } from 'framer-motion'
 import Link from 'next/link'
 import { Sparkles } from 'lucide-react'
@@ -20,16 +20,27 @@ export function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
   const tickerRef = useRef<HTMLDivElement>(null)
   const xRef = useRef(0)
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Détecter si on est sur mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end start']
   })
 
-  // Parallax et fade effects au scroll
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
-  const contentScale = useTransform(scrollYProgress, [0, 0.7], [1, 0.98])
+  // Parallax et fade effects au scroll - désactivé sur mobile
+  const backgroundY = useTransform(scrollYProgress, [0, 1], isMobile ? ['0%', '0%'] : ['0%', '50%'])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, isMobile ? 1 : 0])
+  const contentScale = useTransform(scrollYProgress, [0, 0.7], [1, isMobile ? 1 : 0.98])
 
   // Ticker animation
   useAnimationFrame((time, delta) => {
@@ -56,71 +67,75 @@ export function Hero() {
       {/* Background with gradient and parallax */}
       <motion.div
         className="absolute inset-0 -z-10"
-        style={{ y: backgroundY }}
+        style={{ y: isMobile ? 0 : backgroundY }}
       >
         {/* Gradient background using Framer colors */}
         <div className="absolute inset-0 bg-gradient-to-br from-landing-blue-lite via-landing-purple-lite to-landing-pink-lite" />
 
-        {/* Decorative blur orbs with floating animations */}
-        <motion.div
-          className="absolute top-20 -left-20 w-96 h-96 rounded-full mix-blend-normal filter blur-3xl opacity-30"
-          style={{ background: 'radial-gradient(circle, rgb(211, 123, 255) 0%, transparent 70%)' }}
-          animate={{
-            y: [0, -20, 0],
-            x: [0, 15, 0],
-            scale: [1, 1.1, 1]
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: 'easeInOut'
-          }}
-        />
-        <motion.div
-          className="absolute top-40 -right-20 w-96 h-96 rounded-full mix-blend-normal filter blur-3xl opacity-30"
-          style={{ background: 'radial-gradient(circle, rgb(128, 170, 253) 0%, transparent 70%)' }}
-          animate={{
-            y: [0, 25, 0],
-            x: [0, -20, 0],
-            scale: [1, 1.15, 1]
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 1
-          }}
-        />
-        <motion.div
-          className="absolute bottom-20 left-1/3 w-96 h-96 rounded-full mix-blend-normal filter blur-3xl opacity-25"
-          style={{ background: 'radial-gradient(circle, rgb(252, 172, 132) 0%, transparent 70%)' }}
-          animate={{
-            y: [0, -15, 0],
-            x: [0, 20, 0],
-            scale: [1, 1.08, 1]
-          }}
-          transition={{
-            duration: 22,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 2
-          }}
-        />
+        {/* Decorative blur orbs with floating animations - désactivé sur mobile */}
+        {!isMobile && (
+          <>
+            <motion.div
+              className="absolute top-20 -left-20 w-96 h-96 rounded-full mix-blend-normal filter blur-3xl opacity-30"
+              style={{ background: 'radial-gradient(circle, rgb(211, 123, 255) 0%, transparent 70%)' }}
+              animate={{
+                y: [0, -20, 0],
+                x: [0, 15, 0],
+                scale: [1, 1.1, 1]
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: 'easeInOut'
+              }}
+            />
+            <motion.div
+              className="absolute top-40 -right-20 w-96 h-96 rounded-full mix-blend-normal filter blur-3xl opacity-30"
+              style={{ background: 'radial-gradient(circle, rgb(128, 170, 253) 0%, transparent 70%)' }}
+              animate={{
+                y: [0, 25, 0],
+                x: [0, -20, 0],
+                scale: [1, 1.15, 1]
+              }}
+              transition={{
+                duration: 25,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                delay: 1
+              }}
+            />
+            <motion.div
+              className="absolute bottom-20 left-1/3 w-96 h-96 rounded-full mix-blend-normal filter blur-3xl opacity-25"
+              style={{ background: 'radial-gradient(circle, rgb(252, 172, 132) 0%, transparent 70%)' }}
+              animate={{
+                y: [0, -15, 0],
+                x: [0, 20, 0],
+                scale: [1, 1.08, 1]
+              }}
+              transition={{
+                duration: 22,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                delay: 2
+              }}
+            />
+          </>
+        )}
       </motion.div>
 
       <Container>
         <motion.div
           className="text-center space-y-8 max-w-5xl mx-auto"
-          style={{ opacity: contentOpacity, scale: contentScale }}
+          style={{ opacity: isMobile ? 1 : contentOpacity, scale: isMobile ? 1 : contentScale }}
         >
           {/* Badge with icon */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: isMobile ? 10 : 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: isMobile ? 0.4 : 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="flex justify-center"
           >
-            <Badge icon="⚡">100% Gratuit pour les Syndics</Badge>
+            <Badge>100% Gratuit pour les Syndics</Badge>
           </motion.div>
 
           {/* Animated Title - Exactly like Framer template */}
@@ -131,9 +146,9 @@ export function Hero() {
 
           {/* Subtitle */}
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: isMobile ? 10 : 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ delay: isMobile ? 0.1 : 0.2, duration: isMobile ? 0.4 : 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="text-xl md:text-2xl text-landing-primary/80 max-w-3xl mx-auto"
           >
             Publiez vos appels d'offres, comparez les devis qualifiés et gagnez du temps. Fini les relances interminables et les dossiers perdus.
@@ -141,9 +156,9 @@ export function Hero() {
 
           {/* Waitlist Form - Premium Framer Style */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: isMobile ? 10 : 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ delay: isMobile ? 0.2 : 0.4, duration: isMobile ? 0.4 : 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="w-full max-w-xl mx-auto"
           >
             <div className="relative">
@@ -185,7 +200,7 @@ export function Hero() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ delay: isMobile ? 0.3 : 0.6, duration: isMobile ? 0.4 : 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="flex flex-wrap items-center justify-center gap-6 text-sm text-landing-primary/70"
           >
             <span className="flex items-center gap-2">
@@ -238,7 +253,7 @@ export function Hero() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.8, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ delay: isMobile ? 0.4 : 0.8, duration: isMobile ? 0.4 : 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="relative w-full mt-16 md:mt-20 pb-12 md:pb-16"
       >
         <div className="relative h-[80px] md:h-[100px] flex items-center overflow-hidden">

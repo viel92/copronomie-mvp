@@ -44,7 +44,7 @@ export function HowItWorks() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="flex justify-center mb-6"
           >
-            <Badge icon="🚀">Comment ça marche</Badge>
+            <Badge>Comment ça marche</Badge>
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}

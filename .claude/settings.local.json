@@ -49,11 +49,27 @@
       "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Prepare production deployment\n\n- Fix TypeScript build errors in quote-line.service.ts\n- Fix AuthProvider SSR hydration (isLoading state)\n- Fix condo schema mismatch (remove units_count)\n- Add E2E tests with Playwright (1/4 passing)\n- Add deployment guide (DEPLOYMENT.md)\n- Add environment examples (.env.example files)\n- Update ROADMAP.md with deployment status\n\nTests:\n- condo-creation.spec.ts: PASSING\n- syndic-workflow.spec.ts: WIP (selector issues)\n- full-workflow.spec.ts: WIP (selector issues)\n- company-workflow.spec.ts: WIP (no seed data)\n\nProduction build: SUCCESSFUL\nNext steps: Deploy to Vercel + Railway\n\nGenerated with Claude Code\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(npx @sentry/wizard@latest:*)"
+      "Bash(npx @sentry/wizard@latest:*)",
+      "Read(//c/Users/sekou/Downloads/f274540d-407e-4f77-854a-500457b80df0/**)",
+      "Bash(tree:*)",
+      "Bash(git restore:*)",
+      "Bash(pnpm:*)",
+      "WebFetch(domain:fluence.framer.website)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.framer.com)",
+      "Read(//c/Users/sekou/AppData/Roaming/Claude/**)",
+      "WebFetch(domain:unframer.co)",
+      "WebFetch(domain:www.fontshare.com)",
+      "Read(//c/Users/sekou/Downloads/logs_48580185596/**)",
+      "Bash(tail -100 \"C:/Users/sekou/Downloads/logs_48580185596/3_Tests & Build.txt\")"
     ],
     "deny": [],
     "ask": []
   },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "framer"
+  ],
   "outputStyle": "default",
   "spinnerTipsEnabled": false
 }

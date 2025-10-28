@@ -50,7 +50,7 @@ export function FeatureShowcase() {
   const isInView = useInView(ref, { once: true, margin: '-100px' })
 
   return (
-    <section className="py-section-md md:py-section-lg bg-landing-white">
+    <section id="features" className="py-section-md md:py-section-lg bg-landing-white">
       <Container>
         {/* Header */}
         <div className="text-center mb-16 md:mb-20 max-w-3xl mx-auto">
@@ -60,7 +60,7 @@ export function FeatureShowcase() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="flex justify-center mb-6"
           >
-            <Badge icon="✨">Fonctionnalités</Badge>
+            <Badge>Fonctionnalités</Badge>
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}

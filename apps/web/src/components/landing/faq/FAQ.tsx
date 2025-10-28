@@ -57,7 +57,7 @@ export function FAQ() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="flex justify-center mb-6"
           >
-            <Badge icon="❓">FAQ</Badge>
+            <Badge>FAQ</Badge>
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}

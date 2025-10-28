@@ -44,8 +44,8 @@ export function UserMenu({ userName, userEmail }: UserMenuProps) {
       // Appeler la mutation de déconnexion (sans attendre)
       logoutMutation.mutate()
 
-      // Forcer un rechargement complet vers /auth
-      window.location.href = '/auth'
+      // Forcer un rechargement complet vers l'accueil
+      window.location.href = '/'
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error)
 
@@ -53,7 +53,7 @@ export function UserMenu({ userName, userEmail }: UserMenuProps) {
       if (typeof window !== 'undefined') {
         localStorage.clear()
       }
-      window.location.href = '/auth'
+      window.location.href = '/'
     }
   }
 
