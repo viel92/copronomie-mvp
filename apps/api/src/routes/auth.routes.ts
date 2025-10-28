@@ -3,25 +3,60 @@ import { HTTPException } from 'hono/http-exception'
 import { z } from 'zod'
 import { zValidator } from '@hono/zod-validator'
 import { supabaseClient, supabaseAdmin } from '../config/supabase'
-import { rateLimiter } from '../middleware/rateLimiter.middleware'
-import { authMiddleware } from '../middleware/auth.middleware'
+import { rateLimitPresets } from '../middleware/rateLimiter.supabase'
+import { authMiddleware, invalidateToken } from '../middleware/auth.middleware'
+import { sanitizePlainText } from '../lib/sanitize'
 
 const app = new Hono()
+
+// CRITIQUE-9: Validation de mot de passe fort
+// Liste noire de mots de passe communs (top 100 des plus courants)
+const COMMON_PASSWORDS = new Set([
+  '123456', 'password', '123456789', '12345678', '12345', '1234567', '1234567890',
+  'qwerty', 'abc123', '111111', '123123', 'admin', 'letmein', 'welcome', 'monkey',
+  'password1', '1234', 'dragon', 'master', 'sunshine', 'princess', 'iloveyou',
+  'football', 'shadow', 'superman', 'trustno1', 'passw0rd', 'baseball', 'batman',
+])
+
+const strongPasswordSchema = z.string()
+  .min(12, 'Le mot de passe doit contenir au moins 12 caractères')
+  .max(128, 'Le mot de passe doit contenir moins de 128 caractères')
+  .regex(/[A-Z]/, 'Le mot de passe doit contenir au moins une lettre majuscule')
+  .regex(/[a-z]/, 'Le mot de passe doit contenir au moins une lettre minuscule')
+  .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre')
+  .regex(/[^A-Za-z0-9]/, 'Le mot de passe doit contenir au moins un caractère spécial (!@#$%^&*...)')
+  .refine((password) => {
+    // Vérifier contre la liste de mots de passe communs
+    const lowerPassword = password.toLowerCase()
+    return !COMMON_PASSWORDS.has(lowerPassword)
+  }, {
+    message: 'Ce mot de passe est trop commun. Veuillez en choisir un plus sécurisé.',
+  })
+  .refine((password) => {
+    // Vérifier qu'il n'y a pas de séquences répétitives (aaa, 111, etc.)
+    const hasRepeatedChars = /(.)\1{2,}/.test(password)
+    return !hasRepeatedChars
+  }, {
+    message: 'Le mot de passe ne doit pas contenir de caractères répétés (ex: aaa, 111)',
+  })
 
 // Validation schemas
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  password: z.string().min(6, 'Password must be at least 6 characters'), // Login: pas de validation stricte
 })
 
 const registerSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  password: strongPasswordSchema, // CRITIQUE-9: Utiliser le schéma de password fort
   confirmPassword: z.string(),
   role: z.enum(['syndic', 'company']),
-  companyName: z.string().min(1, 'Company/Syndic name is required'),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
+  companyName: z.string().min(1, 'Company/Syndic name is required')
+    .transform(val => sanitizePlainText(val)), // CRITIQUE-7: Sanitization
+  firstName: z.string().optional()
+    .transform(val => val ? sanitizePlainText(val) : val), // CRITIQUE-7: Sanitization
+  lastName: z.string().optional()
+    .transform(val => val ? sanitizePlainText(val) : val), // CRITIQUE-7: Sanitization
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ['confirmPassword'],
@@ -33,17 +68,16 @@ const forgotPasswordSchema = z.object({
 
 const resetPasswordSchema = z.object({
   token: z.string(),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  password: strongPasswordSchema, // CRITIQUE-9: Utiliser le schéma de password fort
 })
-
-// Apply rate limiting to auth endpoints (temporarily disabled for testing)
-// app.use('*', rateLimiter({ windowMs: 15 * 60 * 1000, max: 5 }))
 
 /**
  * POST /api/auth/register
  * Register a new user
+ * Rate limited: 5 requêtes/15min par IP
  */
 app.post('/register',
+  rateLimitPresets.authRegister(),
   zValidator('json', registerSchema),
   async (c) => {
     const data = c.req.valid('json')
@@ -162,8 +196,10 @@ app.post('/register',
 /**
  * POST /api/auth/login
  * Login user
+ * Rate limited: 10 requêtes/15min par IP
  */
 app.post('/login',
+  rateLimitPresets.authLogin(),
   zValidator('json', loginSchema),
   async (c) => {
     const { email, password } = c.req.valid('json')
@@ -207,6 +243,13 @@ app.post('/logout',
   authMiddleware,
   async (c) => {
     try {
+      // CRITIQUE-6: Invalider le token du cache avant de déconnecter
+      const authHeader = c.req.header('Authorization')
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.substring(7)
+        invalidateToken(token)
+      }
+
       const { error } = await supabaseClient.auth.signOut()
 
       if (error) {
@@ -227,8 +270,10 @@ app.post('/logout',
 /**
  * POST /api/auth/forgot-password
  * Request password reset
+ * Rate limited: 3 requêtes/1h par IP
  */
 app.post('/forgot-password',
+  rateLimitPresets.authForgotPassword(),
   zValidator('json', forgotPasswordSchema),
   async (c) => {
     const { email } = c.req.valid('json')

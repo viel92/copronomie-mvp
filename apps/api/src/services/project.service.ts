@@ -1,4 +1,5 @@
 import { supabaseClient, supabaseAdmin } from '../config/supabase'
+import { sanitizePlainText, sanitizeHtml } from '../lib/sanitize'
 
 export interface Project {
   id: string
@@ -69,12 +70,18 @@ export class ProjectService {
       throw new Error('Supabase admin client not configured')
     }
 
+    // CRITIQUE-7: Sanitization des inputs utilisateur
+    const sanitizedInput = {
+      ...input,
+      title: sanitizePlainText(input.title), // Titre sans HTML
+      description: input.description ? sanitizeHtml(input.description) : undefined, // Description peut contenir du HTML formaté
+      type: sanitizePlainText(input.type), // Type sans HTML
+      status: input.status || 'draft'
+    }
+
     const { data, error } = await supabaseAdmin
       .from('projects')
-      .insert({
-        ...input,
-        status: input.status || 'draft'
-      })
+      .insert(sanitizedInput)
       .select()
       .single()
 
@@ -91,9 +98,28 @@ export class ProjectService {
       throw new Error('Supabase admin client not configured')
     }
 
+    // CRITIQUE-7: Sanitization des inputs utilisateur
+    const sanitizedInput: UpdateProjectInput = {}
+
+    if (input.title !== undefined) {
+      sanitizedInput.title = sanitizePlainText(input.title)
+    }
+    if (input.description !== undefined) {
+      sanitizedInput.description = sanitizeHtml(input.description)
+    }
+    if (input.status !== undefined) {
+      sanitizedInput.status = input.status
+    }
+    if (input.budget !== undefined) {
+      sanitizedInput.budget = input.budget
+    }
+    if (input.deadline !== undefined) {
+      sanitizedInput.deadline = input.deadline
+    }
+
     const { data, error } = await supabaseAdmin
       .from('projects')
-      .update(input)
+      .update(sanitizedInput)
       .eq('id', projectId)
       .eq('syndic_id', userId)
       .select()

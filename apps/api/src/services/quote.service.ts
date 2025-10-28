@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '../config/supabase'
+import { sanitizePlainText, sanitizeHtml, sanitizeObject } from '../lib/sanitize'
 
 export interface Quote {
   id: string
@@ -79,14 +80,25 @@ export class QuoteService {
   async createQuote(input: CreateQuoteInput) {
     if (!supabaseAdmin) throw new Error('Supabase admin client not configured')
 
+    // CRITIQUE-7: Sanitization des inputs utilisateur
     // Prepare the insert data with defaults for NOT NULL columns
     const insertData: any = {
-      ...input,
+      project_id: input.project_id,
+      company_id: input.company_id,
       status: 'draft',
       // Default values for NOT NULL columns
       total_amount: input.total_amount ?? 0,
       total_ht: input.total_ht ?? 0,
       total_ttc: input.total_ttc ?? 0,
+      tva_rate: input.tva_rate,
+      // Sanitized fields
+      description: input.description ? sanitizeHtml(input.description) : undefined, // Description peut contenir du HTML formaté
+      pdf_url: input.pdf_url, // URL déjà validée par Supabase Storage
+      // Sanitize details object if present
+      details: input.details ? sanitizeObject(input.details, {
+        htmlFields: ['description', 'notes'], // Champs qui peuvent contenir du HTML
+        textFields: ['title', 'reference', 'category'] // Champs texte pur
+      }) : undefined,
     }
 
     // Handle both delay_days and delivery_days (depending on DB schema)
@@ -110,9 +122,36 @@ export class QuoteService {
 
   async updateQuote(quoteId: string, input: UpdateQuoteInput) {
     if (!supabaseAdmin) throw new Error('Supabase admin client not configured')
+
+    // CRITIQUE-7: Sanitization des inputs utilisateur
+    const sanitizedInput: UpdateQuoteInput = {}
+
+    if (input.total_amount !== undefined) {
+      sanitizedInput.total_amount = input.total_amount
+    }
+    if (input.total_ht !== undefined) {
+      sanitizedInput.total_ht = input.total_ht
+    }
+    if (input.total_ttc !== undefined) {
+      sanitizedInput.total_ttc = input.total_ttc
+    }
+    if (input.tva_rate !== undefined) {
+      sanitizedInput.tva_rate = input.tva_rate
+    }
+    if (input.status !== undefined) {
+      sanitizedInput.status = input.status
+    }
+    if (input.details !== undefined) {
+      // Sanitize details object
+      sanitizedInput.details = sanitizeObject(input.details, {
+        htmlFields: ['description', 'notes'],
+        textFields: ['title', 'reference', 'category']
+      })
+    }
+
     const { data, error } = await supabaseAdmin
       .from('quotes')
-      .update(input)
+      .update(sanitizedInput)
       .eq('id', quoteId)
       .select()
       .single()

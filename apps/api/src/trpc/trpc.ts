@@ -17,22 +17,7 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   })
 })
 
-// TEMPORAIRE: Procedure pour développement qui simule un utilisateur syndic
-// SÉCURITÉ: Désactivé en production pour éviter bypass d'authentification
-export const devProcedure = process.env.NODE_ENV === 'development'
-  ? t.procedure.use(({ ctx, next }) => {
-      // Si pas d'utilisateur, créer un utilisateur de test syndic
-      const user = ctx.user || {
-        id: 'test-syndic-id',
-        email: 'test@syndic.com',
-        role: 'syndic',
-        user_metadata: {}
-      }
-
-      return next({
-        ctx: {
-          user,
-        },
-      })
-    })
-  : protectedProcedure // Utiliser l'authentification normale en production
+// CRITIQUE-8: SUPPRIMÉ - Le devProcedure était une vulnérabilité critique
+// qui permettait de bypasser l'authentification en développement.
+// Utiliser toujours protectedProcedure pour garantir la sécurité,
+// même en développement. Pour tester, créer de vrais comptes de test.

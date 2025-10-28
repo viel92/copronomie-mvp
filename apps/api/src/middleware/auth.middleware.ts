@@ -1,6 +1,7 @@
 import { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { supabaseClient } from '../config/supabase'
+import { logger, logAuth, logSecurity } from '../lib/logger'
 
 export interface AuthUser {
   id: string
@@ -40,9 +41,9 @@ export const authMiddleware = async (c: Context, next: Next) => {
     const authHeader = c.req.header('Authorization')
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.warn('[Auth] No token provided:', {
+      logSecurity.invalidToken({
         path: c.req.path,
-        method: c.req.method,
+        reason: 'No Authorization header or invalid format',
       })
       throw new HTTPException(401, { message: 'No token provided' })
     }
@@ -53,10 +54,11 @@ export const authMiddleware = async (c: Context, next: Next) => {
     const cached = tokenCache.get(token)
     if (cached && cached.expiresAt > Date.now()) {
       c.set('user', cached.user)
-      console.log('[Auth] Token validated from cache:', {
+      logger.debug({
+        event: 'auth_cache_hit',
         userId: cached.user.id,
-        duration: Date.now() - startTime + 'ms'
-      })
+        duration: Date.now() - startTime,
+      }, 'Token validated from cache')
       await next()
       return
     }
@@ -65,9 +67,9 @@ export const authMiddleware = async (c: Context, next: Next) => {
     const { data: { user }, error } = await supabaseClient.auth.getUser(token)
 
     if (error || !user) {
-      console.warn('[Auth] Invalid token:', {
-        error: error?.message,
+      logSecurity.invalidToken({
         path: c.req.path,
+        reason: error?.message || 'Token validation failed',
       })
       tokenCache.delete(token)
       throw new HTTPException(401, { message: 'Invalid or expired token' })
@@ -89,11 +91,19 @@ export const authMiddleware = async (c: Context, next: Next) => {
       expiresAt: Date.now() + CACHE_TTL,
     })
 
-    console.log('[Auth] Token validated successfully:', {
+    // CRITIQUE-4: Log sécurisé sans exposer de données sensibles
+    logAuth.success({
+      userId: user.id,
+      email: user.email,
+      method: 'token_validation',
+    })
+
+    logger.debug({
+      event: 'auth_validated',
       userId: user.id,
       role: authUser.role,
-      duration: Date.now() - startTime + 'ms'
-    })
+      duration: Date.now() - startTime,
+    }, 'Token validated successfully')
 
     await next()
   } catch (error) {
@@ -173,8 +183,21 @@ export const optionalAuth = async (c: Context, next: Next) => {
 
 /**
  * Fonction utilitaire pour invalider un token du cache (lors de la déconnexion)
+ * CRITIQUE-6: Essentiel pour la sécurité - invalide immédiatement le token
  */
 export const invalidateToken = (token: string) => {
+  const wasInCache = tokenCache.has(token)
   tokenCache.delete(token)
-  console.log('[Auth] Token invalidated from cache')
+
+  if (wasInCache) {
+    logger.info({
+      event: 'token_invalidated',
+      cached: true,
+    }, 'Token invalidated from cache on logout')
+  } else {
+    logger.debug({
+      event: 'token_invalidated',
+      cached: false,
+    }, 'Token invalidation requested (not in cache)')
+  }
 }

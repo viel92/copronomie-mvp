@@ -61,7 +61,9 @@
       "WebFetch(domain:unframer.co)",
       "WebFetch(domain:www.fontshare.com)",
       "Read(//c/Users/sekou/Downloads/logs_48580185596/**)",
-      "Bash(tail -100 \"C:/Users/sekou/Downloads/logs_48580185596/3_Tests & Build.txt\")"
+      "Bash(tail -100 \"C:/Users/sekou/Downloads/logs_48580185596/3_Tests & Build.txt\")",
+      "Read(//c/Users/sekou/Downloads/logs_48580735455/**)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

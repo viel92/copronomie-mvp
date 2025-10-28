@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { ChevronLeft, Mail, Lock, User, Building2 } from 'lucide-react'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { Container } from '@/components/landing/ui'
+import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -14,6 +15,7 @@ export default function RegisterPage() {
   const [userType, setUserType] = useState<'syndic' | 'company'>('syndic')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [password, setPassword] = useState('')
 
   // Redirection si déjà connecté
   useEffect(() => {
@@ -263,10 +265,17 @@ export default function RegisterPage() {
                       type="password"
                       required
                       placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       className="block w-full pl-12 pr-4 py-3 bg-landing-gray-dark border-0 rounded-medium text-landing-primary placeholder:text-landing-primary/40 focus:ring-2 focus:ring-landing-blue transition-all"
                     />
                   </div>
                 </div>
+
+                {/* Password Strength Indicator */}
+                {password && (
+                  <PasswordStrengthIndicator password={password} />
+                )}
 
                 {/* Confirm Password */}
                 <div className="space-y-2">
