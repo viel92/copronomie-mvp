@@ -109,12 +109,18 @@ export default function CompanyProjectDetailsPage() {
         toast.info('Upload PDF vers Supabase Storage à implémenter')
         // const pdfUrl = await uploadToSupabaseStorage(quotePdfFile)
 
-        await submitQuoteMutation.mutateAsync({
+        // First create the quote
+        const createdQuote = await createQuoteMutation.mutateAsync({
           project_id: projectId,
           company_id: user.user.id,
           description: quoteDescription || 'Devis PDF',
           delay_days: quoteDelay ? parseInt(quoteDelay) : undefined,
           pdf_url: undefined, // Will be the uploaded URL
+        })
+
+        // Then submit it
+        await submitQuoteMutation.mutateAsync({
+          id: createdQuote.quote.id
         })
 
         setUploadingPdf(false)

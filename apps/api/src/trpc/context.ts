@@ -6,6 +6,7 @@ export interface CreateContextOptions extends Record<string, unknown> {
     id: string
     email: string
     role: string
+    user_metadata?: any
   }
 }
 
@@ -18,7 +19,8 @@ export const createContext = (
     user: user ? {
       id: user.id,
       email: user.email,
-      role: user.role || 'user'
+      role: user.role || 'user',
+      user_metadata: user.user_metadata
     } : undefined,
   }
 }

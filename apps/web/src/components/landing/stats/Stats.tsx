@@ -4,9 +4,17 @@ import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import CountUp from 'react-countup'
 import { Container } from '../ui'
-import { Building2, TrendingUp, Star } from 'lucide-react'
+import { Building2, TrendingUp, Star, LucideIcon } from 'lucide-react'
 
-const stats = [
+interface Stat {
+  icon: LucideIcon
+  value: number
+  suffix: string
+  label: string
+  separator?: string
+}
+
+const stats: Stat[] = [
   {
     icon: Building2,
     value: 75,

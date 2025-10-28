@@ -8,6 +8,11 @@ interface User {
   role: string
   full_name?: string
   created_at?: string
+  user_metadata?: {
+    full_name?: string
+    company_name?: string
+    [key: string]: any
+  }
 }
 
 interface AuthSession {
@@ -16,12 +21,18 @@ interface AuthSession {
   expires_at: number
 }
 
+interface LoginResult {
+  success: boolean
+  error?: string
+  user: User | null
+}
+
 interface AuthContextType {
   user: User | null
   session: AuthSession | null
   isLoading: boolean
   isAuthenticated: boolean
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
+  login: (email: string, password: string) => Promise<LoginResult>
   logout: () => Promise<void>
   refreshSession: () => Promise<void>
   checkSessionExpiry: () => boolean
@@ -161,10 +172,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       saveSession(user, session)
-      return { success: true }
+      return { success: true, user }
     } catch (error: any) {
       console.error('Login error:', error)
-      return { success: false, error: error.message || 'Erreur de connexion' }
+      return { success: false, error: error.message || 'Erreur de connexion', user: null }
     } finally {
       setIsLoading(false)
     }

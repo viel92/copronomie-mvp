@@ -26,7 +26,7 @@ export const devProcedure = process.env.NODE_ENV === 'development'
         id: 'test-syndic-id',
         email: 'test@syndic.com',
         role: 'syndic',
-        metadata: {}
+        user_metadata: {}
       }
 
       return next({

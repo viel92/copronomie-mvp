@@ -76,7 +76,7 @@ function NewQuoteForm() {
     await createQuoteMutation.mutateAsync({
       project_id: projectId,
       company_id: 'temp-company-id', // TODO: Fix company_id access
-      amount: parseFloat(formData.amount),
+      total_amount: parseFloat(formData.amount),
       details: formData.details ? {
         delivery_days: parseInt(formData.delivery_days),
         description: formData.details

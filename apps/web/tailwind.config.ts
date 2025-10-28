@@ -88,7 +88,7 @@ const config: Config = {
 
         'body-14': ['14px', { lineHeight: '22px', fontWeight: '400' }],
 
-        'tag': ['14px', { lineHeight: '16px', letterSpacing: '0px', fontWeight: '500', textTransform: 'uppercase' }],
+        'tag': ['14px', { lineHeight: '16px', letterSpacing: '0px', fontWeight: '500' }],
 
         // Legacy aliases (for backward compatibility)
         'display': ['76px', { lineHeight: '1em', letterSpacing: '0px', fontWeight: '500' }],

@@ -6,7 +6,7 @@ export interface AuthUser {
   id: string
   email: string
   role?: string
-  metadata?: any
+  user_metadata?: any
 }
 
 declare module 'hono' {
@@ -78,7 +78,7 @@ export const authMiddleware = async (c: Context, next: Next) => {
       id: user.id,
       email: user.email!,
       role: user.user_metadata?.role,
-      metadata: user.user_metadata,
+      user_metadata: user.user_metadata,
     }
 
     c.set('user', authUser)
@@ -151,7 +151,7 @@ export const optionalAuth = async (c: Context, next: Next) => {
           id: user.id,
           email: user.email!,
           role: user.user_metadata?.role,
-          metadata: user.user_metadata,
+          user_metadata: user.user_metadata,
         }
 
         c.set('user', authUser)

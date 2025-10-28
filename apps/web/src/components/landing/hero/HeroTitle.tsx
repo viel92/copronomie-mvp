@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, Variant } from 'framer-motion'
 
 interface HeroTitleProps {
   text: string
@@ -16,16 +16,16 @@ export function HeroTitle({ text, className }: HeroTitleProps) {
       y: 10,
       filter: 'blur(2px)',
     },
-    visible: (i: number) => ({
+    visible: ((i: number) => ({
       opacity: 1,
       y: 0,
       filter: 'blur(0px)',
       transition: {
         delay: i * 0.08,
         duration: 0.5,
-        ease: [0.22, 1, 0.36, 1], // Custom easing like Framer
+        ease: [0.22, 1, 0.36, 1],
       },
-    }),
+    })) as Variant,
   }
 
   return (
