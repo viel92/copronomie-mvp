@@ -1,0 +1,2 @@
+# Ce fichier assure que le dossier public est tracké par Git
+# même si d'autres fichiers sont ajoutés au .gitignore

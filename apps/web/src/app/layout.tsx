@@ -79,6 +79,15 @@ export const metadata: Metadata = {
   },
   formatDetection: {
     telephone: false
+  },
+  manifest: '/manifest.json',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' }
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
+    ]
   }
 }
 

@@ -1,0 +1,17 @@
+# Robots.txt pour Copronomie
+# Permet l'indexation par tous les moteurs de recherche
+
+User-agent: *
+Allow: /
+
+# Pages à ne pas indexer
+Disallow: /api/
+Disallow: /syndic/
+Disallow: /company/
+Disallow: /condo/
+Disallow: /auth/
+Disallow: /login
+Disallow: /register
+
+# Sitemap
+Sitemap: https://staging-app.copronomie.fr/sitemap.xml
