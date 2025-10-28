@@ -48,7 +48,7 @@ export function sanitizeHtml(
   }
 
   try {
-    const config = {
+    const config: any = {
       ALLOWED_TAGS: options?.allowedTags || ALLOWED_TAGS,
       ALLOWED_ATTR: options?.allowedAttributes || ALLOWED_ATTR,
       ALLOWED_URI_REGEXP,
@@ -63,7 +63,7 @@ export function sanitizeHtml(
       KEEP_CONTENT: true,
     }
 
-    const clean = DOMPurify.sanitize(html, config)
+    const clean = String(DOMPurify.sanitize(html, config))
 
     // Log si du contenu a été supprimé (potentielle tentative d'attaque)
     if (clean !== html && clean.length < html.length * 0.9) {
@@ -95,10 +95,10 @@ export function sanitizePlainText(text: string): string {
 
   try {
     // Utiliser DOMPurify pour supprimer tout HTML
-    const clean = DOMPurify.sanitize(text, {
+    const clean = String(DOMPurify.sanitize(text, {
       ALLOWED_TAGS: [], // Aucun tag autorisé
       KEEP_CONTENT: true, // Garder le texte
-    })
+    }))
 
     return clean.trim()
   } catch (error) {
@@ -125,7 +125,7 @@ export function sanitizeObject<T extends Record<string, any>>(
     return obj
   }
 
-  const sanitized = { ...obj }
+  const sanitized: Record<string, any> = { ...obj }
   const htmlFields = options?.htmlFields || []
   const textFields = options?.textFields || []
 
@@ -152,7 +152,7 @@ export function sanitizeObject<T extends Record<string, any>>(
     }
   }
 
-  return sanitized
+  return sanitized as T
 }
 
 /**
