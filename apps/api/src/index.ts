@@ -5,6 +5,7 @@ import { cors } from 'hono/cors'
 import { logger as honoLogger } from 'hono/logger'
 import { prettyJSON } from 'hono/pretty-json'
 import { secureHeaders } from 'hono/secure-headers'
+import { bodyLimit } from 'hono/body-limit'
 import dotenv from 'dotenv'
 import { createServer } from 'http'
 import { trpcServer } from '@hono/trpc-server'
@@ -37,6 +38,27 @@ const allowedOrigins = [
 
 // Global middlewares
 app.use('*', honoLogger())
+
+// HAUTE-4: Request Body Size Limits
+// Protège contre les attaques DoS via de gros payloads
+app.use('*', bodyLimit({
+  maxSize: 1024 * 1024, // 1MB par défaut (suffisant pour JSON/form data)
+  onError: (c) => {
+    logger.warn({
+      event: 'body_limit_exceeded',
+      path: c.req.path,
+      method: c.req.method,
+      maxSize: '1MB',
+    }, 'Request body size limit exceeded')
+
+    return c.json({
+      error: 'Payload trop volumineux',
+      message: 'La taille de la requête dépasse la limite autorisée (1MB)',
+      maxSize: '1MB',
+    }, 413)
+  },
+}))
+
 app.use('*', cors({
   origin: (origin) => {
     // Autoriser les requêtes sans origine (mobile apps, curl, Postman)
